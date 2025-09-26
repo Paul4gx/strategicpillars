@@ -37,10 +37,10 @@
                                 <button class="tf-button-primary w-full" type="submit">Login<i class="icon-arrow-right-add"></i></button>
                             </div>
                         </form>
-                        <div class="flex items-center justify-center">
+                        {{-- <div class="flex items-center justify-center">
                             <p>Not a member?</p>
                             <a href="{{ route('register') }}" class="btn-show-register">Register here</a>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>

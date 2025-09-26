@@ -17,12 +17,22 @@
                                         <li>{{ $property->property_type }}</li>
                                     </ul>
                                     <div class="list-icons-page">
-                                        <div class="item">
+                                        {{-- <div class="item">
                                             <div class="icon">
                                                 <i class="flaticon-heart"></i>
                                             </div>
                                             <p>Save</p>
-                                        </div>
+                                        </div> --}}
+                                        @auth
+                                        @if(auth()->user()->is_admin)
+                                            <div class="item" onclick="window.location.href='{{ route('admin.properties.edit', $property) }}'">
+                                                    <div class="icon">
+                                                        <i class="flaticon-edit"></i>
+                                                    </div>
+                                                    <p>Edit</p>
+                                            </div>
+                                        @endif
+                                    @endauth
                                         <div class="item">
                                             <div class="icon">
                                                 <i class="flaticon-outbox"></i>

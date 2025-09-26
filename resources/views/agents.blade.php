@@ -41,14 +41,18 @@
                                                 <div class="title">Role:</div>
                                                 <p>{{ $agent->role }}</p>
                                             </li>
+                                            @if($agent->phone)
                                             <li>
                                                 <div class="title">Phone:</div>
-                                                <p>{{ $agent->phone }}</p>
+                                                <p><a href="tel:{{ $agent->phone }}">{{ $agent->phone }}</a></p>
                                             </li>
+                                            @endif
+                                            @if($agent->email)
                                             <li>
                                                 <div class="title">Email:</div>
-                                                <p>{{ $agent->email }}</p>
+                                                <p><a href="mailto:{{ $agent->email }}">{{ $agent->email }}</a></p>
                                             </li>
+                                            @endif
                                             <li>
                                                 <div class="title">Socials</div>
                                                 <div class="wg-social style-black">

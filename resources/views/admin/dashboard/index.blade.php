@@ -54,7 +54,7 @@
 </div>
 
 <div class="grid-section-1">
-    <div class="wg-box pl-44">
+    <div class="wg-box pl-44 w-100">
         <h4>Recent Properties</h4>
         <ul class="wrap-recent-activities">
             @forelse($recentProperties as $property)
@@ -67,7 +67,7 @@
             @endforelse
         </ul>
     </div>
-    <div class="wg-box">
+    {{-- <div class="wg-box">
         <h4>Recent Bookings</h4>
         <ul class="wrap-recent-activities">
             @forelse($recentBookings as $booking)
@@ -79,6 +79,6 @@
                 <li>No recent bookings.</li>
             @endforelse
         </ul>
-    </div>
+    </div> --}}
 </div>
 @endsection 

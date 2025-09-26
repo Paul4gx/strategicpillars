@@ -8,6 +8,8 @@
  
                 <x-text-input2 title="Name" type="text" name="name" type-class="text" required/>
                 <x-text-input2 title="Role/Title" type="text" name="role" type-class="text" required/>
+                <x-text-input2 title="Email" type="email" name="email" type-class="text" required/>
+                <x-text-input2 title="Phone" type="tel" name="phone" type-class="text" required/>
                 <x-textarea2 name="bio" title="Bio" required/>
                 <x-text-input2 title="Sort Order" type="number" name="sort_order" type-class="text" required/>
                 <div class="form-group">

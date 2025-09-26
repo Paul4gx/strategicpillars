@@ -27,16 +27,17 @@
                 <div class="header-inner background-white">
                     <div class="header-inner-wrap">
                         <div id="site-logo">
-                            <a href="{{ route('admin.dashboard') }}" rel="home">
+                            <a href="{{ route('home') }}" rel="home">
                                 <img class="d-block" id="logo-header" src="{{ asset('/images/logo/logo.svg') }}" alt="">
                             </a>
                         </div>
                         <nav class="main-menu">
                             <ul class="navigation">
+                                <li><a href="{{ route('home') }}">Home</a></li>
                                 <li><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                                 <li><a href="{{ route('admin.properties.index') }}">Properties</a></li>
                                 <li><a href="{{ route('admin.estates.index') }}">Estates</a></li>
-                                <li><a href="{{ route('admin.bookings.index') }}">Bookings</a></li>
+                                {{-- <li><a href="{{ route('admin.bookings.index') }}">Bookings</a></li> --}}
                                 <li><a href="{{ route('admin.team.index') }}">Team</a></li>
                                 <li><a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
                             </ul>
@@ -58,15 +59,18 @@
                     <div class="section-menu-left">
                         <div class="menu-content">
                             <ul>
+                                <li class="@if(request()->routeIs('home')) active @endif">
+                                    <a href="{{ route('home') }}"><i class="flaticon-home"></i>Home</a>
+                                </li>
                                 <li class="@if(request()->routeIs('admin.dashboard')) active @endif">
-                                    <a href="{{ route('admin.dashboard') }}"><i class="flaticon-hotel"></i>Dashboard</a>
+                                    <a href="{{ route('admin.dashboard') }}"><i class="flaticon-house"></i>Dashboard</a>
                                 </li>
                                 <li class="@if(request()->routeIs('admin.team-members.*')) active @endif">
                                     <a href="{{ route('admin.team.index') }}"><i class="flaticon-user"></i>Team</a>
                                 </li>
-                                <li class="@if(request()->routeIs('admin.bookings.*')) active @endif">
+                                {{-- <li class="@if(request()->routeIs('admin.bookings.*')) active @endif">
                                     <a href="{{ route('admin.bookings.index') }}"><i class="flaticon-chat-bubble"></i>Bookings</a>
-                                </li>
+                                </li> --}}
                                 <li class="@if(request()->routeIs('admin.properties.*')) active @endif">
                                     <a href="{{ route('admin.properties.index') }}"><i class="flaticon-home-2"></i>Properties</a>
                                 </li>

@@ -3,20 +3,22 @@
 @section('content')
 <div class="wg-box pl-44 mb-20">
     <h1 class="h3 mb-4 text-gray-800">Edit Team Member</h1>
-    <form action="{{ route('admin.team.update', $teamMember) }}" method="POST" enctype="multipart/form-data" class="form-bacsic-infomation flex gap30 flex-column">
+    <form action="{{ route('admin.team.update', $team) }}" method="POST" enctype="multipart/form-data" class="form-bacsic-infomation flex gap30 flex-column">
         @csrf
         @method('PUT')
 
-        <x-text-input2 title="Name" type="text" name="name" type-class="text" value="{{ old('name', $teamMember->name) }}" required/>
-        <x-text-input2 title="Role/Title" type="text" name="role" type-class="text" value="{{ old('role', $teamMember->role) }}" required/>
-        <x-textarea2 name="bio" title="Bio" value="{{ old('bio', $teamMember->bio) }}" required/>
-        <x-text-input2 title="Sort Order" type="number" name="sort_order" type-class="text" value="{{ old('sort_order', $teamMember->sort_order) }}" required/>
+        <x-text-input2 title="Name" type="text" name="name" type-class="text" value="{{ old('name', $team->name) }}" required/>
+        <x-text-input2 title="Role/Title" type="text" name="role" type-class="text" value="{{ old('role', $team->role) }}" required/>
+        <x-text-input2 title="Email" type="email" name="email" type-class="text" value="{{ old('email', $team->email) }}" required/>
+        <x-text-input2 title="Phone" type="tel" name="phone" type-class="text" value="{{ old('phone', $team->phone) }}" required/>
+        <x-textarea2 name="bio" title="Bio" value="{{ old('bio', $team->bio) }}" required/>
+        <x-text-input2 title="Sort Order" type="number" name="sort_order" type-class="text" value="{{ old('sort_order', $team->sort_order) }}" required/>
         
         <div class="form-group">
             <label>Social Links</label>
             <div id="social-links">
                 @php 
-                    $socialLinks = old('social_links', $teamMember->social_links ?? []);
+                    $socialLinks = old('social_links', $team->social_links ?? []);
                     $socialIndex = 0;
                 @endphp
                 
@@ -66,9 +68,9 @@
          <div class="upload-image-wrap">
                                     <div class="text">Profile Photo</div>
                                     <div class="list">
-                                         @if($teamMember->photo)            
+                                         @if($team->photo)            
                                         <div class="item">
-                                            <img id="current-photo" src="{{ asset('storage/uploads/team/'.$teamMember->photo) }}" alt="">
+                                            <img id="current-photo" src="{{ asset('storage/uploads/team/'.$team->photo) }}" alt="">
                                             <ul class="">
                                             </ul>
                                         </div>
