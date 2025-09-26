@@ -24,7 +24,7 @@
                                 <h4>Town House</h4>
                                 <p>17 Properties</p>
                             </div>
-                            <a href="{{ route('properties.home', ['type' => 'townhouse']) }}" class="button-arrow-right"><i class="icon-arrow-right-add"></i></a>
+                            <a href="{{ route('properties.index', ['type' => 'townhouse']) }}" class="button-arrow-right"><i class="icon-arrow-right-add"></i></a>
                         </div>
                         <div class="cities-item style-3 wow fadeInUp" data-wow-delay="0.1s">
                             <img src="{{ asset('images/house/our-properties-2.jpg') }}" alt="Modern Villa">
@@ -32,7 +32,7 @@
                                 <h4>Modern Villa</h4>
                                 <p>12 Properties</p>
                             </div>
-                            <a href="{{ route('properties.home', ['type' => 'villa']) }}" class="button-arrow-right"><i class="icon-arrow-right-add"></i></a>
+                            <a href="{{ route('properties.index', ['type' => 'villa']) }}" class="button-arrow-right"><i class="icon-arrow-right-add"></i></a>
                         </div>
                         <div class="cities-item style-3 wow fadeInUp" data-wow-delay="0.15s">
                             <img src="{{ asset('images/house/our-properties-3.jpg') }}" alt="Apartment">
@@ -40,7 +40,7 @@
                                 <h4>Apartment</h4>
                                 <p>25 Properties</p>
                             </div>
-                            <a href="{{ route('properties.home', ['type' => 'apartment']) }}" class="button-arrow-right"><i class="icon-arrow-right-add"></i></a>
+                            <a href="{{ route('properties.index', ['type' => 'apartment']) }}" class="button-arrow-right"><i class="icon-arrow-right-add"></i></a>
                         </div>
                         <div class="cities-item style-3 wow fadeInUp" data-wow-delay="0.2s">
                             <img src="{{ asset('images/house/our-properties-4.jpg') }}" alt="Single Family">
@@ -48,7 +48,7 @@
                                 <h4>Duplex</h4>
                                 <p>18 Properties</p>
                             </div>
-                            <a href="{{ route('properties.home', ['type' => 'duplex']) }}" class="button-arrow-right"><i class="icon-arrow-right-add"></i></a>
+                            <a href="{{ route('properties.index', ['type' => 'duplex']) }}" class="button-arrow-right"><i class="icon-arrow-right-add"></i></a>
                         </div>
                         <div class="cities-item style-3 wow fadeInUp" data-wow-delay="0.25s">
                             <img src="{{ asset('images/house/our-properties-5.jpg') }}" alt="Luxury Shortlets">

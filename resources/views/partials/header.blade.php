@@ -32,10 +32,10 @@
                             <li>
                                 <ul>
                                     <li class="title">Property Types</li>
-                                    <li><a href="{{ route('properties.home', ['type' => 'apartment']) }}">Apartments</a></li>
-                                    <li><a href="{{ route('properties.home', ['type' => 'office']) }}">Office</a></li>
-                                    <li><a href="{{ route('properties.home', ['type' => 'duplex']) }}">Duplex</a></li>
-                                    <li><a href="{{ route('properties.home', ['type' => 'bungalow']) }}">Bungalow</a></li>
+                                    <li><a href="{{ route('properties.index', ['type' => 'apartment']) }}">Apartments</a></li>
+                                    <li><a href="{{ route('properties.index', ['type' => 'office']) }}">Office</a></li>
+                                    <li><a href="{{ route('properties.index', ['type' => 'duplex']) }}">Duplex</a></li>
+                                    <li><a href="{{ route('properties.index', ['type' => 'bungalow']) }}">Bungalow</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -92,10 +92,10 @@
                     <li>
                         <span>Property Types</span>
                         <ul>
-                            <li><a href="{{ route('properties.home', ['type' => 'apartment']) }}">Apartments</a></li>
-                            <li><a href="{{ route('properties.home', ['type' => 'office']) }}">Office</a></li>
-                            <li><a href="{{ route('properties.home', ['type' => 'duplex']) }}">Duplex</a></li>
-                            <li><a href="{{ route('properties.home', ['type' => 'bungalow']) }}">Bungalow</a></li>
+                            <li><a href="{{ route('properties.index', ['type' => 'apartment']) }}">Apartments</a></li>
+                            <li><a href="{{ route('properties.index', ['type' => 'office']) }}">Office</a></li>
+                            <li><a href="{{ route('properties.index', ['type' => 'duplex']) }}">Duplex</a></li>
+                            <li><a href="{{ route('properties.index', ['type' => 'bungalow']) }}">Bungalow</a></li>
                         </ul>
                     </li>
                 </ul>

@@ -51,12 +51,12 @@
                             <div class="footer-cl-2">
                                 <div class="ft-title">Prime Locations</div>
                                 <ul class="navigation-menu-footer">
-                                    <li><a href="{{ route('properties.home', ['location' => 'victoria-island']) }}">Victoria Island</a></li>
-                                    <li><a href="{{ route('properties.home', ['location' => 'ikoyi']) }}">Ikoyi</a></li>
-                                    <li><a href="{{ route('properties.home', ['location' => 'lekki']) }}">Lekki</a></li>
-                                    <li><a href="{{ route('properties.home', ['location' => 'banana-island']) }}">Banana Island</a></li>
-                                    <li><a href="{{ route('properties.home', ['location' => 'ajah']) }}">Ajah</a></li>
-                                    <li><a href="{{ route('properties.home', ['location' => 'surulere']) }}">Surulere</a></li>
+                                    <li><a href="{{ route('properties.index', ['location' => 'victoria-island']) }}">Victoria Island</a></li>
+                                    <li><a href="{{ route('properties.index', ['location' => 'ikoyi']) }}">Ikoyi</a></li>
+                                    <li><a href="{{ route('properties.index', ['location' => 'lekki']) }}">Lekki</a></li>
+                                    <li><a href="{{ route('properties.index', ['location' => 'banana-island']) }}">Banana Island</a></li>
+                                    <li><a href="{{ route('properties.index', ['location' => 'ajah']) }}">Ajah</a></li>
+                                    <li><a href="{{ route('properties.index', ['location' => 'surulere']) }}">Surulere</a></li>
                                 </ul>
                             </div>
                             <div class="footer-cl-3">

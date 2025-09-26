@@ -79,7 +79,6 @@
     <script src="{{ asset('/js/swiper.js') }}"></script>
     <script src="{{ asset('/js/countto.js') }}"></script>
     <script src="{{ asset('/js/circletype.min.js') }}"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCFC3m2n0jBRFTMvUNZc0-6Y0Rzlcadzcw"></script>
     <script src="{{ asset('/js/maps.js') }}"></script>
     <script src="{{ asset('/js/marker.js') }}"></script>
     <script src="{{ asset('/js/infobox.min.js') }}"></script>
