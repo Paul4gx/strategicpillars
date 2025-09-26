@@ -59,7 +59,7 @@
                     </div>
                     <div class="number">+234-800-555-6789</div>
                 </div> --}}
-                <div data-bs-toggle="modal" data-bs-target="#modallogin" class="header-user">
+                <div onclick="return location.href='{{route('login')}}'" class="header-user">
                     <div class="icon">
                         <i class="flaticon-user"></i>
                     </div>

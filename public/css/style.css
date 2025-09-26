@@ -975,8 +975,8 @@ a:hover, a:focus {
 }
 
 .tf-section {
-  padding-top: 200px;
-  padding-bottom: 200px;
+  padding-top: 150px;
+  padding-bottom: 150px;
 }
 
 .heading-section {
@@ -12119,14 +12119,14 @@ body::-webkit-scrollbar {
   color: var(--Secondary);
   text-align: center;
 }
-.modal .modal-dialog .modal-content .content-right {
+.modal-content .content-right {
   padding: 78px 30px 30px 30px;
   width: 100%;
 }
-.modal .modal-dialog .modal-content .content-right h4 {
+.modal-content .content-right h4 {
   margin-bottom: 22px;
 }
-.modal .modal-dialog .modal-content .content-right form {
+.modal-content .content-right form {
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
@@ -12136,32 +12136,32 @@ body::-webkit-scrollbar {
   flex-direction: column;
   margin-bottom: 22px;
 }
-.modal .modal-dialog .modal-content .content-right form > .flex {
+.modal-content .content-right form > .flex {
   margin-top: -3px;
   margin-bottom: -5px;
 }
-.modal .modal-dialog .modal-content .content-right form .checkbox-item p {
+.modal-content .content-right form .checkbox-item p {
   font-size: 14px;
   font-weight: 400;
   line-height: 28px;
 }
-.modal .modal-dialog .modal-content .content-right form .lost-password {
+.modal-content .content-right form .lost-password {
   font-size: 14px;
   font-weight: 400;
   line-height: 28px;
   color: var(--Third);
 }
-.modal .modal-dialog .modal-content .content-right .btn-show-register {
+.modal-content .content-right .btn-show-register {
   font-size: 15px;
   font-weight: 500;
   line-height: 18px;
   margin-left: 4px;
 }
-.modal .modal-dialog .modal-content .content-right .wg-social-1 {
+.modal-content .content-right .wg-social-1 {
   gap: 20px;
   margin-top: 2px;
 }
-.modal .modal-dialog .modal-content .content-right .wg-social-1 li a i {
+.modal-content .content-right .wg-social-1 li a i {
   font-size: 20px;
 }
 .modal#modalregister .modal-dialog .modal-content {
@@ -14087,7 +14087,7 @@ a {
     width: 100%;
     height: 500px;
   }
-  .modal .modal-dialog .modal-content .content-right {
+  .modal-content .content-right {
     padding: 34px 30px 30px 30px;
   }
   .property-map-wrap-v4 {

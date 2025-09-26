@@ -5,29 +5,29 @@
                         <div class="top-footer">
                             <div class="logo-footer">
                                 <a href="{{route('home')}}">
-                                    <img id="logo-footer" src="{{asset('images/logo/logo.svg')}}" alt="images">
+                                    <img id="logo-footer" src="{{asset('images/logo/logo.svg')}}" alt="Strategic Pillars Logo">
                                 </a>
                             </div>
                             <div class="wg-social style-black">
                                 <span>Follow Us</span>
                                 <ul class="list-social">
                                     <li>
-                                        <a href="#">
+                                        <a href="https://facebook.com/strategicpillars" target="_blank" rel="noopener">
                                             <i class="icon-facebook"></i>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#">
+                                        <a href="https://twitter.com/strategicpillars" target="_blank" rel="noopener">
                                             <i class="icon-twitter"></i>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#">
+                                        <a href="https://instagram.com/strategicpillars" target="_blank" rel="noopener">
                                             <i class="icon-instagram"></i>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#">
+                                        <a href="https://linkedin.com/company/strategicpillars" target="_blank" rel="noopener">
                                             <i class="icon-linkedin2"></i>
                                         </a>
                                     </li>
@@ -36,59 +36,63 @@
                         </div>
                         <div class="center-footer">
                             <div class="footer-cl-1">
-                                <div class="ft-title">Subscribe</div>
-                                <form class="form-subscribe style-line-bottom">
+                                <div class="ft-title">Stay Updated</div>
+                                <form class="form-subscribe style-line-bottom" action="{{ route('newsletter.subscribe') }}" method="POST">
+                                    @csrf
                                     <fieldset class="email">
-                                        <input type="email" placeholder="Your e-mail" class="style-1" name="email" tabindex="2" value="" aria-required="true" required="">
+                                        <input type="email" placeholder="Your email address" class="style-1" name="email" tabindex="2" value="" aria-required="true" required="">
                                     </fieldset>
                                     <div class="button-submit style-absolute-right">
-                                        <button class="tf-button-bg type-secondary" type="submit">Send <i class="icon-arrow-right-add"></i></button>
+                                        <button class="tf-button-bg type-secondary" type="submit">Subscribe <i class="icon-arrow-right-add"></i></button>
                                     </div>
                                 </form>
-                                <div class="text">Subscribe to our newsletter to receive our weekly feed.</div>
+                                <div class="text">Get exclusive access to luxury properties and real estate insights in Lagos.</div>
                             </div>
                             <div class="footer-cl-2">
-                                <div class="ft-title">Estates</div>
+                                <div class="ft-title">Prime Locations</div>
                                 <ul class="navigation-menu-footer">
-                                    <li><a href="property-map-v1.html">Miami</a></li>
-                                    <li><a href="property-map-v1.html">New York</a></li>
-                                    <li><a href="property-map-v1.html">Chicago</a></li>
-                                    <li><a href="property-map-v1.html">Sacramento</a></li>
-                                    <li><a href="#">Los Angeles</a></li>
-                                    <li><a href="#">San Francisco</a></li>
+                                    <li><a href="{{ route('properties.home', ['location' => 'victoria-island']) }}">Victoria Island</a></li>
+                                    <li><a href="{{ route('properties.home', ['location' => 'ikoyi']) }}">Ikoyi</a></li>
+                                    <li><a href="{{ route('properties.home', ['location' => 'lekki']) }}">Lekki</a></li>
+                                    <li><a href="{{ route('properties.home', ['location' => 'banana-island']) }}">Banana Island</a></li>
+                                    <li><a href="{{ route('properties.home', ['location' => 'ajah']) }}">Ajah</a></li>
+                                    <li><a href="{{ route('properties.home', ['location' => 'surulere']) }}">Surulere</a></li>
                                 </ul>
                             </div>
                             <div class="footer-cl-3">
                                 <div class="ft-title">Quick Links</div>
                                 <ul class="navigation-menu-footer">
-                                    <li><a href="{{ url('/') }}">Home</a></li>
+                                    <li><a href="{{ route('home') }}">Home</a></li>
                                     <li><a href="{{ route('estates.index') }}">Estates</a></li>
                                     <li><a href="{{ route('interiors.index') }}">Interiors</a></li>
-                                    <li><a href="{{ route('agents.index') }}">Agents</a></li>
-                                    <li><a href="{{ route('company.about') }}">About</a></li>
+                                    <li><a href="{{ route('agents.index') }}">Our Team</a></li>
+                                    <li><a href="{{ route('company.about') }}">About Us</a></li>
                                     <li><a href="{{ route('company.contact') }}">Contact</a></li>
                                 </ul>
                             </div>
                             <div class="footer-cl-4">
-                                <div class="ft-title">Properties</div>
+                                <div class="ft-title">Our Services</div>
                                 <ul class="navigation-menu-footer">
-                                    <li><a href="{{ route('properties.index') }}">All Properties</a></li>
-                                    <li><a href="{{ route('properties.index') }}">Our Properties</a></li>
-                                    <li><a href="{{ route('shortlets.index') }}">Shortlets</a></li>
-                                    <li><a href="{{ route('shortlets.index') }}">Apartments</a></li>
-                                    <li><a href="{{ route('shortlets.index') }}">Lands</a></li>
+                                    <li><a href="{{ route('properties.index') }}">Property Sales</a></li>
+                                    <li><a href="{{ route('shortlets.index') }}">Luxury Shortlets</a></li>
+                                    <li><a href="{{ route('interiors.index') }}">Interior Design</a></li>
+                                    <li><a href="{{ route('estates.index') }}">Estate Management</a></li>
+                                    <li><a href="{{ route('company.contact') }}">Property Investment</a></li>
+                                    <li><a href="{{ route('company.contact') }}">Consultation</a></li>
                                 </ul>
                             </div>
                             <div class="footer-cl-5">
-                                <div class="ft-title">Our Address</div>
+                                <div class="ft-title">Contact Information</div>
                                 <ul class="navigation-menu-footer">
-                                    <li><div class="text">info@spillargroup.com (123) 456-7890</div></li>
-                                    <li><div class="text">90 Fifth Avenue, 3rd Floor San Francisco, CA 1980</div></li>
+                                    <li><div class="text">info@strategicpillars.com</div></li>
+                                    <li><div class="text">+234 (0) 812 345 6789</div></li>
+                                    <li><div class="text">+234 (0) 701 234 5678</div></li>
+                                    <li><div class="text">1234 Victoria Island, Lagos, Nigeria</div></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="bottom-footer">
-                            <div class="text"><p>&copy; {{ date('Y') }} Strategic Pillars. All rights reserved.</p></div>
+                            <div class="text"><p>&copy; {{ date('Y') }} Strategic Pillars. All rights reserved. | Revolutionizing Real Estate with Class, Comfort, and Purpose in Lagos.</p></div>
                         </div>
                     </div>
                 </div>

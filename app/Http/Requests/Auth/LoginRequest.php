@@ -82,4 +82,16 @@ class LoginRequest extends FormRequest
     {
         return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
     }
+        /**
+     * Get the intended URL.
+     *
+     * @return string
+     */
+    public function redirectTo(): string
+    {
+        if (Auth::user()->is_admin) {
+            return route('admin.dashboard');
+        }
+        return route('dashboard');
+    }
 }
