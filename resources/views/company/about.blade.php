@@ -74,7 +74,7 @@
                     <li class="wow fadeInUp"><p><strong>Personalized Service:</strong> Bespoke solutions tailored to each client's unique vision</p></li>
                 </ul>
             </div>
-            <a href="{{ route('contact') }}" class="tf-button-primary style-black wow fadeInUp">Get In Touch <i class="icon-arrow-right-add"></i></a>
+            <a href="{{ route('company.contact') }}" class="tf-button-primary style-black wow fadeInUp">Get In Touch <i class="icon-arrow-right-add"></i></a>
             
                                 </div>
                             </div>

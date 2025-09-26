@@ -33,9 +33,9 @@
                                 <ul>
                                     <li class="title">Property Types</li>
                                     <li><a href="{{ route('properties.home', ['type' => 'apartment']) }}">Apartments</a></li>
-                                    <li><a href="{{ route('properties.home', ['type' => 'villa']) }}">Villas</a></li>
-                                    <li><a href="{{ route('properties.home', ['type' => 'townhouse']) }}">Townhouses</a></li>
-                                    <li><a href="{{ route('properties.home', ['type' => 'single-family']) }}">Single Family</a></li>
+                                    <li><a href="{{ route('properties.home', ['type' => 'office']) }}">Office</a></li>
+                                    <li><a href="{{ route('properties.home', ['type' => 'duplex']) }}">Duplex</a></li>
+                                    <li><a href="{{ route('properties.home', ['type' => 'bungalow']) }}">Bungalow</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -77,14 +77,10 @@
         </a>
         <ul>
             <li class="{{ request()->is('/') ? 'current' : '' }}">
-                <span>Home</span>
-                <ul>
-                    <li><a href="{{ route('home') }}">Home Page</a></li>
-                    <li><a href="{{ route('properties.home') }}">Properties</a></li>
-                </ul>
+                <a href="{{ route('home') }}">Home</a>
             </li>
             <li class="{{ request()->is('properties*') || request()->is('estates*') ? 'current' : '' }}">
-                <span>Property</span>
+                <span>Properties</span>
                 <ul>
                     <li>
                         <span>List view</span>
@@ -97,46 +93,29 @@
                         <span>Property Types</span>
                         <ul>
                             <li><a href="{{ route('properties.home', ['type' => 'apartment']) }}">Apartments</a></li>
-                            <li><a href="{{ route('properties.home', ['type' => 'villa']) }}">Villas</a></li>
-                            <li><a href="{{ route('properties.home', ['type' => 'townhouse']) }}">Townhouses</a></li>
-                            <li><a href="{{ route('properties.home', ['type' => 'single-family']) }}">Single Family</a></li>
+                            <li><a href="{{ route('properties.home', ['type' => 'office']) }}">Office</a></li>
+                            <li><a href="{{ route('properties.home', ['type' => 'duplex']) }}">Duplex</a></li>
+                            <li><a href="{{ route('properties.home', ['type' => 'bungalow']) }}">Bungalow</a></li>
                         </ul>
                     </li>
                 </ul>
             </li>
             <li class="{{ request()->is('agents*') ? 'current' : '' }}">
-                <span>Realtor</span>
-                <ul>
-                    <li><a href="{{ route('agents.index') }}">Agent List</a></li>
-                    <li><a href="{{ route('company.about') }}">About Us</a></li>
-                </ul>
+               <a href="{{ route('agents.index') }}">Realtors</a>
             </li>
             <li class="{{ request()->is('company*') ? 'current' : '' }}">
-                <span>Pages</span>
+                <span>Company</span>
                 <ul>
                     <li><a href="{{ route('company.about') }}">About Us</a></li>
-                    <li><a href="{{ route('company.contact') }}">Contact</a></li>
-                    <li><a href="{{ route('shortlets.index') }}">Shortlets</a></li>
-                    <li><a href="{{ route('interiors.index') }}">Interiors</a></li>
+                    <li><a href="{{ route('company.contact') }}">Contact Us</a></li>
                 </ul>
             </li>
             <li class="{{ request()->is('shortlets*') ? 'current' : '' }}">
-                <span>Shortlets</span>
-                <ul>
-                    <li><a href="{{ route('shortlets.index') }}">All Shortlets</a></li>
-                    <li><a href="{{ route('shortlets.index', ['type' => 'luxury']) }}">Luxury Shortlets</a></li>
-                    <li><a href="{{ route('shortlets.index', ['type' => 'budget']) }}">Budget Shortlets</a></li>
-                </ul>
+                <a href="{{ route('shortlets.index') }}">Shortlets</a>
             </li>
             <li class="{{ request()->is('interiors*') ? 'current' : '' }}">
-                <span>Interiors</span>
-                <ul>
-                    <li><a href="{{ route('interiors.index') }}">Interior Design</a></li>
-                    <li><a href="{{ route('interiors.index', ['type' => 'luxury']) }}">Luxury Interiors</a></li>
-                    <li><a href="{{ route('interiors.index', ['type' => 'modern']) }}">Modern Interiors</a></li>
-                </ul>
+                <a href="{{ route('interiors.index') }}">Interiors</a>
             </li>
-            <li><a href="{{ route('company.contact') }}">Contact</a></li>
         </ul>
     </nav>
 </header>

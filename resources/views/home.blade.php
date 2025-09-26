@@ -45,10 +45,10 @@
                         <div class="cities-item style-3 wow fadeInUp" data-wow-delay="0.2s">
                             <img src="{{ asset('images/house/our-properties-4.jpg') }}" alt="Single Family">
                             <div class="content">
-                                <h4>Single Family</h4>
+                                <h4>Duplex</h4>
                                 <p>18 Properties</p>
                             </div>
-                            <a href="{{ route('properties.home', ['type' => 'single-family']) }}" class="button-arrow-right"><i class="icon-arrow-right-add"></i></a>
+                            <a href="{{ route('properties.home', ['type' => 'duplex']) }}" class="button-arrow-right"><i class="icon-arrow-right-add"></i></a>
                         </div>
                         <div class="cities-item style-3 wow fadeInUp" data-wow-delay="0.25s">
                             <img src="{{ asset('images/house/our-properties-5.jpg') }}" alt="Luxury Shortlets">
@@ -234,12 +234,12 @@
                             </div>
                             <div class="list">
                                 <div class="item wow fadeInUp">
-                                    <h3>2K+</h3>
-                                    <p>Happy People</p>
+                                    <h3>500+</h3>
+                                    <p>Luxury Properties Sold</p>
                                 </div>
                                 <div class="item  wow fadeInUp" data-wow-delay="0.1s">
                                     <h3>4.9</h3>
-                                    <p>Overall rating</p>
+                                    <p>Customer Rating</p>
                                     <div class="ratings">
                                         <i class="flaticon-star-1"></i>
                                         <i class="flaticon-star-1"></i>
@@ -256,16 +256,16 @@
                                     <div class="testimonials-item background-white wow fadeInUp">
                                         <div class="head">
                                             <div class="image">
-                                                <img src="{{ asset('images/user-yellow-circle-20550.svg') }}" alt="Sarah Johnson">
+                                                <img src="{{ asset('images/user-yellow-circle-20550.svg') }}" alt="Adunni Adebayo">
                                             </div>
                                             <div>
                                                 <div class="title">
-                                                    <a href="#">Sarah Johnson</a>
+                                                    <a href="#">Adunni Adebayo</a>
                                                 </div>
-                                                <p>Property Owner</p>
+                                                <p>Victoria Island Resident</p>
                                             </div>
                                         </div>
-                                        <div class="description">Strategic Pillars delivered exactly what they promised - a fully furnished smart home that exceeded our expectations. The quality and attention to detail is outstanding.</div>
+                                        <div class="description">Strategic Pillars transformed our Ikoyi apartment into a masterpiece. The interior design team understood our vision perfectly and delivered luxury beyond our expectations. Truly exceptional service!</div>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="45" height="44" viewbox="0 0 45 44" fill="none">
                                             <g filter="url(#filter0_d_249_14836)">
                                             <path d="M9.67883 38C6.64234 38 4.27007 36.9524 2.56204 34.8571C0.854015 32.6667 0 29.4286 0 25.1429C0 20.6667 0.99635 16.381 2.98905 12.2857C5.07664 8.19048 8.01825 4.14286 11.8139 0.142864C11.9088 0.0476213 12.0511 0 12.2409 0C12.5255 0 12.7153 0.142858 12.8102 0.428574C13 0.619048 13.0474 0.857143 12.9526 1.14286C10.6752 4.19048 9.10949 7.14286 8.25548 10C7.49635 12.7619 7.11679 15.8571 7.11679 19.2857C7.11679 21.8571 7.44891 23.8571 8.11314 25.2857C8.77737 26.7143 9.67883 28 10.8175 29.1429L5.40876 30.1429C5.31387 28.5238 5.74088 27.2857 6.68978 26.4286C7.73358 25.5714 9.06205 25.1429 10.6752 25.1429C12.6679 25.1429 14.1861 25.7143 15.2299 26.8571C16.3686 28 16.938 29.5714 16.938 31.5714C16.938 33.6667 16.2737 35.2857 14.9453 36.4286C13.7117 37.4762 11.9562 38 9.67883 38ZM31.5985 38C28.562 38 26.1898 36.9524 24.4818 34.8571C22.8686 32.6667 22.062 29.4286 22.062 25.1429C22.062 20.5714 23.0584 16.2381 25.0511 12.1429C27.0438 8.04762 29.9854 4.04762 33.8759 0.142864C33.9708 0.0476213 34.1131 0 34.3029 0C34.5876 0 34.7774 0.142858 34.8723 0.428574C35.062 0.619048 35.1095 0.857143 35.0146 1.14286C32.7372 4.19048 31.1715 7.14286 30.3175 10C29.5584 12.7619 29.1788 15.8571 29.1788 19.2857C29.1788 21.8571 29.4635 23.9048 30.0328 25.4286C30.6971 26.8571 31.5985 28.0952 32.7372 29.1429L27.4708 30.1429C27.3759 28.5238 27.8029 27.2857 28.7518 26.4286C29.7007 25.5714 31.0292 25.1429 32.7372 25.1429C34.7299 25.1429 36.2482 25.7143 37.292 26.8571C38.4307 28 39 29.5714 39 31.5714C39 33.6667 38.3358 35.2857 37.0073 36.4286C35.7737 37.4762 33.9708 38 31.5985 38Z" fill="#1A1A1A"></path>
@@ -277,16 +277,16 @@
                                     <div class="testimonials-item background-white wow fadeInUp" data-wow-delay="0.1s">
                                         <div class="head">
                                             <div class="image">
-                                                <img src="{{ asset('images/user-yellow-circle-20550.svg') }}" alt="Michael Chen">
+                                                <img src="{{ asset('images/user-yellow-circle-20550.svg') }}" alt="Chinedu Okonkwo">
                                             </div>
                                             <div>
                                                 <div class="title">
-                                                    <a href="#">Michael Chen</a>
+                                                    <a href="#">Chinedu Okonkwo</a>
                                                 </div>
-                                                <p>Tech Enthusiast</p>
+                                                <p>Lekki Business Owner</p>
                                             </div>
                                         </div>
-                                        <div class="description">The smart home features are incredible. Everything is automated and the energy efficiency is remarkable. We're saving money while living in luxury.</div>
+                                        <div class="description">As a business owner in Lekki, I needed a property that reflects success. Strategic Pillars delivered a stunning villa with modern amenities that impresses all my clients. The investment was worth every naira!</div>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="45" height="44" viewbox="0 0 45 44" fill="none">
                                             <g filter="url(#filter0_d_249_14836)">
                                             <path d="M9.67883 38C6.64234 38 4.27007 36.9524 2.56204 34.8571C0.854015 32.6667 0 29.4286 0 25.1429C0 20.6667 0.99635 16.381 2.98905 12.2857C5.07664 8.19048 8.01825 4.14286 11.8139 0.142864C11.9088 0.0476213 12.0511 0 12.2409 0C12.5255 0 12.7153 0.142858 12.8102 0.428574C13 0.619048 13.0474 0.857143 12.9526 1.14286C10.6752 4.19048 9.10949 7.14286 8.25548 10C7.49635 12.7619 7.11679 15.8571 7.11679 19.2857C7.11679 21.8571 7.44891 23.8571 8.11314 25.2857C8.77737 26.7143 9.67883 28 10.8175 29.1429L5.40876 30.1429C5.31387 28.5238 5.74088 27.2857 6.68978 26.4286C7.73358 25.5714 9.06205 25.1429 10.6752 25.1429C12.6679 25.1429 14.1861 25.7143 15.2299 26.8571C16.3686 28 16.938 29.5714 16.938 31.5714C16.938 33.6667 16.2737 35.2857 14.9453 36.4286C13.7117 37.4762 11.9562 38 9.67883 38ZM31.5985 38C28.562 38 26.1898 36.9524 24.4818 34.8571C22.8686 32.6667 22.062 29.4286 22.062 25.1429C22.062 20.5714 23.0584 16.2381 25.0511 12.1429C27.0438 8.04762 29.9854 4.04762 33.8759 0.142864C33.9708 0.0476213 34.1131 0 34.3029 0C34.5876 0 34.7774 0.142858 34.8723 0.428574C35.062 0.619048 35.1095 0.857143 35.0146 1.14286C32.7372 4.19048 31.1715 7.14286 30.3175 10C29.5584 12.7619 29.1788 15.8571 29.1788 19.2857C29.1788 21.8571 29.4635 23.9048 30.0328 25.4286C30.6971 26.8571 31.5985 28.0952 32.7372 29.1429L27.4708 30.1429C27.3759 28.5238 27.8029 27.2857 28.7518 26.4286C29.7007 25.5714 31.0292 25.1429 32.7372 25.1429C34.7299 25.1429 36.2482 25.7143 37.292 26.8571C38.4307 28 39 29.5714 39 31.5714C39 33.6667 38.3358 35.2857 37.0073 36.4286C35.7737 37.4762 33.9708 38 31.5985 38Z" fill="#1A1A1A"></path>
@@ -298,16 +298,16 @@
                                     <div class="testimonials-item background-white wow fadeInUp" data-wow-delay="0.2s">
                                         <div class="head">
                                             <div class="image">
-                                                <img src="{{ asset('images/user-yellow-circle-20550.svg') }}" alt="Emily Rodriguez">
+                                                <img src="{{ asset('images/user-yellow-circle-20550.svg') }}" alt="Funmi Okafor">
                                             </div>
                                             <div>
                                                 <div class="title">
-                                                    <a href="#">Emily Rodriguez</a>
+                                                    <a href="#">Funmi Okafor</a>
                                                 </div>
-                                                <p>Family Home Owner</p>
+                                                <p>Banana Island Resident</p>
                                             </div>
                                         </div>
-                                        <div class="description">From the first consultation to moving in, the entire process was smooth and professional. Strategic Pillars truly cares about their customers.</div>
+                                        <div class="description">Moving to Banana Island was a dream come true, and Strategic Pillars made it seamless. Their shortlet service during our transition was impeccable, and the interior design team created a home that truly reflects our family's values and lifestyle.</div>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="45" height="44" viewbox="0 0 45 44" fill="none">
                                             <g filter="url(#filter0_d_249_14836)">
                                             <path d="M9.67883 38C6.64234 38 4.27007 36.9524 2.56204 34.8571C0.854015 32.6667 0 29.4286 0 25.1429C0 20.6667 0.99635 16.381 2.98905 12.2857C5.07664 8.19048 8.01825 4.14286 11.8139 0.142864C11.9088 0.0476213 12.0511 0 12.2409 0C12.5255 0 12.7153 0.142858 12.8102 0.428574C13 0.619048 13.0474 0.857143 12.9526 1.14286C10.6752 4.19048 9.10949 7.14286 8.25548 10C7.49635 12.7619 7.11679 15.8571 7.11679 19.2857C7.11679 21.8571 7.44891 23.8571 8.11314 25.2857C8.77737 26.7143 9.67883 28 10.8175 29.1429L5.40876 30.1429C5.31387 28.5238 5.74088 27.2857 6.68978 26.4286C7.73358 25.5714 9.06205 25.1429 10.6752 25.1429C12.6679 25.1429 14.1861 25.7143 15.2299 26.8571C16.3686 28 16.938 29.5714 16.938 31.5714C16.938 33.6667 16.2737 35.2857 14.9453 36.4286C13.7117 37.4762 11.9562 38 9.67883 38ZM31.5985 38C28.562 38 26.1898 36.9524 24.4818 34.8571C22.8686 32.6667 22.062 29.4286 22.062 25.1429C22.062 20.5714 23.0584 16.2381 25.0511 12.1429C27.0438 8.04762 29.9854 4.04762 33.8759 0.142864C33.9708 0.0476213 34.1131 0 34.3029 0C34.5876 0 34.7774 0.142858 34.8723 0.428574C35.062 0.619048 35.1095 0.857143 35.0146 1.14286C32.7372 4.19048 31.1715 7.14286 30.3175 10C29.5584 12.7619 29.1788 15.8571 29.1788 19.2857C29.1788 21.8571 29.4635 23.9048 30.0328 25.4286C30.6971 26.8571 31.5985 28.0952 32.7372 29.1429L27.4708 30.1429C27.3759 28.5238 27.8029 27.2857 28.7518 26.4286C29.7007 25.5714 31.0292 25.1429 32.7372 25.1429C34.7299 25.1429 36.2482 25.7143 37.292 26.8571C38.4307 28 39 29.5714 39 31.5714C39 33.6667 38.3358 35.2857 37.0073 36.4286C35.7737 37.4762 33.9708 38 31.5985 38Z" fill="#1A1A1A"></path>

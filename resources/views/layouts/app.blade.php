@@ -52,7 +52,7 @@
     @stack('styles')
 </head>
 <body class="body counter-scroll">
-    <div class="preload {{ Route::is('home') ? 'preload-container' : '' }}">
+    <div class="preload preload-container">
         <div class="middle"></div>
     </div>
     <div id="wrapper">
