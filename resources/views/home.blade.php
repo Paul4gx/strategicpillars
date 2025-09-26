@@ -13,7 +13,7 @@
                 <div class="col-12">
                     <div class="heading-section text-center">
                         <h2 class="wow fadeInUp">Explore Our Properties</h2>
-                        <div class="text wow fadeInUp">Based on your view history</div>
+                        <div class="text wow fadeInUp">Discover our curated collection of premium properties</div>
                     </div>
                 </div>
                 <div class="col-12">
@@ -72,7 +72,7 @@
                 <div class="col-12">
                     <div class="heading-section text-center">
                         <h2 class="wow fadeInUp">Homes For You</h2>
-                        <div class="text wow fadeInUp">Based on your view history</div>
+                        <div class="text wow fadeInUp">Handpicked properties that match your lifestyle</div>
                     </div>
                 </div>
                 <div class="col-12">
