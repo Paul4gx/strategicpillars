@@ -12,14 +12,19 @@
                     <li class="{{ request()->is('/') ? 'current' : '' }}">
                         <a href="{{ route('home') }}">Home</a>
                     </li>
-                    <li class="has-children {{ request()->is('company*') ? 'current' : '' }}">
-                        <a href="javascript:void(0);">Company</a>
+                    <li class="{{ request()->is('company.about') ? 'current' : '' }}">
+                        <a href="javascript:void(0);">About Us</a>
+                    </li>
+                    <li class="has-children">
+                        <a href="javascript:void(0);">Services</a>
                         <ul>
-                            <li><a href="{{ route('company.about') }}">About Us</a></li>
-                            <li><a href="{{ route('company.contact') }}">Contact</a></li>
+                            <li><a href="{{ route('properties.index') }}">Real Estates</a></li>
+                            <li><a href="{{ route('interiors.index') }}">Interior Design</a></li>
+                            <li><a href="{{ route('shortlets.index') }}">Shortlets</a></li>
+                            <li><a href="https://thecleancrew.ng">The Clean Crew</a></li>
                         </ul>
                     </li>
-                    <li class="has-children {{ request()->is('properties*') || request()->is('estates*') ? 'current' : '' }}">
+                    {{-- <li class="has-children {{ request()->is('properties*') || request()->is('estates*') ? 'current' : '' }}">
                         <a href="javascript:void(0);">Properties</a>
                         <ul class="mega-menu">
                             <li>
@@ -39,26 +44,28 @@
                                 </ul>
                             </li>
                         </ul>
-                    </li>
+                    </li> --}}
                     <li class="{{ request()->is('agents*') ? 'current' : '' }}">
-                        <a href="{{ route('agents.index') }}">Realtor</a>
+                        <a href="{{ route('agents.index') }}">Team</a>
                     </li>
-                    
-                    <li class="{{ request()->is('shortlets*') ? 'current' : '' }}">
+                    {{-- <li class="{{ request()->is('shortlets*') ? 'current' : '' }}">
                         <a href="{{ route('shortlets.index') }}">Shortlets</a>
                     </li>
                     <li class="{{ request()->is('interiors*') ? 'current' : '' }}">
                         <a href="{{ route('interiors.index') }}">Interiors</a>
+                    </li> --}}
+                    <li class="{{ request()->is('company.contact') ? 'current' : '' }}">
+                        <a href="{{ route('company.contact') }}">Contact Us</a>
                     </li>
                 </ul>
             </nav>
             <div class="header-right">
-                {{-- <div class="header-call">
+                <div class="header-call">
                     <div class="icon">
                         <i class="flaticon-phone"></i>
                     </div>
-                    <div class="number">+234-800-555-6789</div>
-                </div> --}}
+                    <div class="number">{{ config('settings.contact.primary_phone') }}</div>
+                </div>
                 <div onclick="return location.href='{{route('login')}}'" class="header-user">
                     <div class="icon">
                         <i class="flaticon-user"></i>

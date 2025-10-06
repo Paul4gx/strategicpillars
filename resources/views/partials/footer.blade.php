@@ -84,10 +84,11 @@
                             <div class="footer-cl-5">
                                 <div class="ft-title">Contact Information</div>
                                 <ul class="navigation-menu-footer">
-                                    <li><div class="text">info@strategicpillars.com</div></li>
-                                    <li><div class="text">+234 (0) 812 345 6789</div></li>
-                                    <li><div class="text">+234 (0) 701 234 5678</div></li>
-                                    <li><div class="text">1234 Victoria Island, Lagos, Nigeria</div></li>
+                                    <li><div class="text">{{ config('settings.contact.email') }}</div></li>
+                                    <li><div class="text">{{ config('settings.contact.primary_phone') }}</div></li>
+                                    <li><div class="text">{{ config('settings.contact.secondary_phone') }}</div></li>
+                                    <li><div class="text">{{ config('settings.contact.tertiary_phone') }}</div></li>
+                                    <li><div class="text">{{ config('settings.company.address') }}</div></li>
                                 </ul>
                             </div>
                         </div>

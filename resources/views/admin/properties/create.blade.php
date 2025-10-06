@@ -83,6 +83,7 @@
 
 .checkbox-item p {
     margin: 0;
+    margin-left: 25px;
     flex: 1;
     font-size: 14px;
     color: #333;
@@ -117,7 +118,7 @@
 @endpush
 @section('content')
  <div class="wg-box pl-44 mb-20">
-<h3>Add New Property</h3>
+<h3 style="margin-bottom:20px">Add New Property</h3>
 <form id="property-form" 
       action="{{ route('admin.properties.store') }}" 
       method="POST" 
@@ -143,10 +144,10 @@
     <x-text-input2 title="Discount Price (optional)" name="discount_price" type="number" :value="old('discount_price')" />
     <x-text-input2 title="Property Type" name="property_type" :value="old('property_type')" required />
     <div class="row mb-3">
-        <fieldset class="col-md-4">
+        <fieldset class="col-md-4 mb-15">
             <x-text-input2 title="Bedrooms" name="bedrooms" type="number" :value="old('bedrooms')" />
         </fieldset>
-        <fieldset class="col-md-4">
+        <fieldset class="col-md-4 mb-15">
             <x-text-input2 title="Bathrooms" name="bathrooms" type="number" :value="old('bathrooms')" />
         </fieldset>
         <fieldset class="col-md-4">
@@ -154,10 +155,10 @@
         </fieldset>
     </div>
     <div class="row mb-3">
-        <fieldset class="col-md-3">
+        <fieldset class="col-md-3 mb-15">
             <x-text-input2 title="Year Built" name="year_built" type="number" :value="old('year_built')" min="1900" max="2030" />
         </fieldset>
-        <fieldset class="col-md-3">
+        <fieldset class="col-md-3 mb-15">
             <x-text-input2 title="Area (sq ft)" name="area" type="number" :value="old('area')" min="1" />
         </fieldset>
         <fieldset class="col-md-6">
@@ -168,18 +169,18 @@
                 <option value="complex" @if(old('building_type') == 'complex') selected @endif>Complex</option>
                 <option value="others" @if(old('building_type') == 'others') selected @endif>Others</option>
             </select>
-            <label>Building Type</label>
+            {{-- <label>Building Type</label> --}}
             @error('building_type')<div class="text-danger">{{ $message }}</div>@enderror
         </fieldset>
     </div>
     <div class="row mb-3">
-        <fieldset class="col-md-4">
+        <fieldset class="col-md-4 mb-15">
             <x-text-input2 title="Address" name="address" :value="old('address')" />
         </fieldset>
-        <fieldset class="col-md-4">
+        <fieldset class="col-md-4 mb-15">
             <x-text-input2 title="City" name="city" :value="old('city')" />
         </fieldset>
-        <fieldset class="col-md-4">
+        <fieldset class="col-md-4 mb-15">
             <x-text-input2 title="State" name="state" :value="old('state')" />
         </fieldset>
     </div>
@@ -194,8 +195,8 @@
     </fieldset>
     
     {{-- Property Features/Amenities Section --}}
-    <div class="form-group">
-        <label>Property Features & Amenities</label>
+    <div class="form-group w-100">
+        <h5 class="mb-5">Property Features & Amenities</h5>
             @php
                 $amenities = [
                     "Climate & Comfort" => [
@@ -343,18 +344,19 @@
         @endforeach
         </div>
         @error('property_features')<div class="text-danger">{{ $message }}</div>@enderror
-    <div style="">
+    {{-- <div style=""> --}}
         {{-- <input type="file" class="filepond" name="propertyImages[]" data-max-files="10" data-allow-reorder="true" data-max-file-size="3MB" multiple /> --}}
         {{-- <input type="file" class="" name="file[]" multiple /> --}}
-    </div>
+    {{-- </div> --}}
     {{-- <fieldset class="text has-top-title">
         <label>Images (multiple)</label>
         <input type="file" name="images[]" class="" name="text" tabindex="2" aria-required="true"  multiple>
         @error('images')<div class="text-danger">{{ $message }}</div>@enderror
     </fieldset> --}}
     <fieldset class="text has-top-title">
-        <label>Featured</label>
-        <input type="checkbox" name="featured" value="1" @if(old('featured')) checked @endif> Show on homepage
+        <label for="featuredbox" style="font-size: 1.5rem;cursor: pointer">Show on homepage: </label>
+        <input type="checkbox" name="featured" id="featuredbox" value="1" @if(old('featured')) checked @endif> 
+        {{-- <span class="text-xl"></span> --}}
     </fieldset>
     <x-text-input2 title="Video Link (YouTube/Vimeo)" name="video_link" :value="old('video_link')" />
     <fieldset class="text has-top-title">
@@ -365,7 +367,7 @@
     <x-text-input2 title="SEO Description" name="seo_description" :value="old('seo_description')" />
         {{-- Dropzone container (not a form itself) --}}
     <fieldset class="text has-top-title">
-        <label>Property Images</label>
+        <h5 class="mb-5">Add Property Images</h5>
         <div class="dropzone" id="property-dropzone"></div>
         @error('images')<div class="text-danger">{{ $message }}</div>@enderror
     </fieldset>

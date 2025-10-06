@@ -17,6 +17,11 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('/icon/flaticon_just-home.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('/icon/icomoon/style.css') }}">
     <link rel="shortcut icon" href="{{ asset('/images/favicon.png') }}">
+    <style>
+        .dz-button{
+            font-size: 2rem !important;
+        }
+    </style>
     @stack('styles')
 </head>
 <body class="body dashboard">

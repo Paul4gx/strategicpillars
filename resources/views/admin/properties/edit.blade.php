@@ -146,10 +146,10 @@
     <x-text-input2 title="Discount Price (optional)" name="discount_price" type="number" :value="old('discount_price', $property->discount_price)" />
     <x-text-input2 title="Property Type" name="property_type" :value="old('property_type', $property->property_type)" required />
     <div class="row mb-3">
-        <fieldset class="col-md-4">
+        <fieldset class="col-md-4 mb-15">
             <x-text-input2 title="Bedrooms" name="bedrooms" type="number" :value="old('bedrooms', $property->bedrooms)" />
         </fieldset>
-        <fieldset class="col-md-4">
+        <fieldset class="col-md-4 mb-15">
             <x-text-input2 title="Bathrooms" name="bathrooms" type="number" :value="old('bathrooms', $property->bathrooms)" />
         </fieldset>
         <fieldset class="col-md-4">
@@ -157,10 +157,10 @@
         </fieldset>
     </div>
     <div class="row mb-3">
-        <fieldset class="col-md-3">
+        <fieldset class="col-md-3 mb-15">
             <x-text-input2 title="Year Built" name="year_built" type="number" :value="old('year_built', $property->year_built)" min="1900" max="2030" />
         </fieldset>
-        <fieldset class="col-md-3">
+        <fieldset class="col-md-3 mb-15">
             <x-text-input2 title="Area (sq ft)" name="area" type="number" :value="old('area', $property->area)" min="1" />
         </fieldset>
         <fieldset class="col-md-6">
@@ -175,10 +175,10 @@
         </fieldset>
     </div>
     <div class="row mb-3">
-        <fieldset class="col-md-4">
+        <fieldset class="col-md-4 mb-15">
             <x-text-input2 title="Address" name="address" :value="old('address', $property->address)" />
         </fieldset>
-        <fieldset class="col-md-4">
+        <fieldset class="col-md-4 mb-15">
             <x-text-input2 title="City" name="city" :value="old('city', $property->city)" />
         </fieldset>
         <fieldset class="col-md-4">
@@ -198,7 +198,7 @@
     
     {{-- Property Features/Amenities Section --}}
     <div class="form-group">
-        <label>Property Features & Amenities</label>
+        <h5 class="mb-5">Property Features & Amenities</h5>
         @php
             $amenities = [
                 "Climate & Comfort" => [
@@ -350,8 +350,8 @@
     @error('property_features')<div class="text-danger">{{ $message }}</div>@enderror
     
     <fieldset class="text has-top-title">
-        <label>Featured</label>
-        <input type="checkbox" name="featured" value="1" @if(old('featured', $property->featured)) checked @endif> Show on homepage
+        <label for="featuredbox" style="font-size: 1.5rem;cursor: pointer">Show on homepage: </label>
+        <input type="checkbox" name="featured" id="featuredbox" value="1" @if(old('featured', $property->featured)) checked @endif> 
     </fieldset>
     <x-text-input2 title="Video Link (YouTube/Vimeo)" name="video_link" :value="old('video_link', $property->video_link)" />
     <div class="form-group mb-3">
@@ -388,7 +388,7 @@
     </div>
         {{-- Dropzone container (not a form itself) --}}
     <fieldset class="text has-top-title">
-        <label>Add More Property Images</label>
+        <h5 class="mb-5">Add Property Images</h5>
         <div class="dropzone" id="property-dropzone"></div>
         @error('images')<div class="text-danger">{{ $message }}</div>@enderror
     </fieldset>

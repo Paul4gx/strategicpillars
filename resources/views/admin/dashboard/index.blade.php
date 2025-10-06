@@ -58,8 +58,8 @@
         <h4>Recent Properties</h4>
         <ul class="wrap-recent-activities">
             @forelse($recentProperties as $property)
-                <li class="recent-activities-item">
-                    <div class="image"></div>
+                <li class="recent-activities-item" style="cursor: pointer;" onclick="location.href='{{ route('properties.show', $property->slug) }}'">
+                    <div class="image justify-content-center d-flex align-items-center"><i class="flaticon-home-2" style="font-size: 25px;"></i></div>
                     <p><span>{{ $property->title }}</span> ({{ $property->status }})</p>
                 </li>
             @empty

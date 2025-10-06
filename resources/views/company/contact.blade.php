@@ -50,7 +50,7 @@
                             </div>
                             <div class="content">
                                 <h4>Our Address</h4>
-                                <p>{{ config('settings.address', '123 Victoria Island, Lagos, Nigeria') }}</p>
+                                <p>{{ config('settings.company.address') }}</p>
                             </div>
                             <div class="bot">
                                 <div class="text-content">View on Map</div>
@@ -61,8 +61,10 @@
                                 <i class="flaticon-phone"></i>
                             </div>
                             <div class="content">
-                                <h4>Phone Number</h4>
-                                <p>{{ config('settings.phone', '+234 800 000 0000') }}</p>
+                                <h4>Phone Numbers</h4>
+                                <p>{{ config('settings.contact.primary_phone') }}</p>
+                                <p>{{ config('settings.contact.secondary_phone') }}</p>
+                                <p>{{ config('settings.contact.tertiary_phone') }}</p>
                             </div>
                             <div class="bot">
                                 <div class="text-content">Call Now</div>
@@ -74,7 +76,7 @@
                             </div>
                             <div class="content">
                                 <h4>Email Address</h4>
-                                <p>{{ config('settings.email', 'info@strategicpillars.com') }}</p>
+                                <p>{{ config('settings.contact.email') }}</p>
                             </div>
                             <div class="bot">
                                 <div class="text-content">Send Email</div>
@@ -125,8 +127,8 @@
                                         <button class="tf-button-primary w-full" type="submit">Send Message<i class="icon-arrow-right-add"></i></button>
                                     </div>
                                                     {{-- <div class="mt-4">
-                    <a href="https://wa.me/{{ config('settings.whatsapp', '2340000000') }}" class="btn btn-success me-2" target="_blank"><i class="flaticon-whatsapp"></i> WhatsApp</a>
-                    <a href="tel:{{ config('settings.phone', '+2340000000') }}" class="btn btn-outline-primary"><i class="flaticon-phone"></i> Call Us</a>
+                    <a href="https://wa.me/{{ str_replace('+', '', config('settings.contact.whatsapp')) }}" class="btn btn-success me-2" target="_blank"><i class="flaticon-whatsapp"></i> WhatsApp</a>
+                    <a href="tel:{{ config('settings.contact.primary_phone') }}" class="btn btn-outline-primary"><i class="flaticon-phone"></i> Call Us</a>
                 </div> --}}
                                 </form>
                             </div>
