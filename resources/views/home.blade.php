@@ -22,7 +22,7 @@
                             <img src="{{ asset('images/house/our-properties-1.jpg') }}" alt="Town House">
                             <div class="content">
                                 <h4>Town House</h4>
-                                <p>17 Properties</p>
+                                <p>{{ \App\Models\Property::where('property_type', 'townhouse')->count() }} Properties</p>
                             </div>
                             <a href="{{ route('properties.index', ['type' => 'townhouse']) }}" class="button-arrow-right"><i class="icon-arrow-right-add"></i></a>
                         </div>
@@ -30,7 +30,7 @@
                             <img src="{{ asset('images/house/our-properties-2.jpg') }}" alt="Modern Villa">
                             <div class="content">
                                 <h4>Modern Villa</h4>
-                                <p>12 Properties</p>
+                                <p>{{ \App\Models\Property::where('property_type', 'villa')->count() }} Properties</p>
                             </div>
                             <a href="{{ route('properties.index', ['type' => 'villa']) }}" class="button-arrow-right"><i class="icon-arrow-right-add"></i></a>
                         </div>
@@ -38,15 +38,15 @@
                             <img src="{{ asset('images/house/our-properties-3.jpg') }}" alt="Apartment">
                             <div class="content">
                                 <h4>Apartment</h4>
-                                <p>25 Properties</p>
+                                <p>{{ \App\Models\Property::where('property_type', 'apartment')->count() }} Properties</p>
                             </div>
                             <a href="{{ route('properties.index', ['type' => 'apartment']) }}" class="button-arrow-right"><i class="icon-arrow-right-add"></i></a>
                         </div>
                         <div class="cities-item style-3 wow fadeInUp" data-wow-delay="0.2s">
-                            <img src="{{ asset('images/house/our-properties-4.jpg') }}" alt="Single Family">
+                            <img src="{{ asset('images/house/our-properties-4.jpg') }}" alt="Duplex">
                             <div class="content">
                                 <h4>Duplex</h4>
-                                <p>18 Properties</p>
+                                <p>{{ \App\Models\Property::where('property_type', 'duplex')->count() }} Properties</p>
                             </div>
                             <a href="{{ route('properties.index', ['type' => 'duplex']) }}" class="button-arrow-right"><i class="icon-arrow-right-add"></i></a>
                         </div>
@@ -54,9 +54,9 @@
                             <img src="{{ asset('images/house/our-properties-5.jpg') }}" alt="Luxury Shortlets">
                             <div class="content">
                                 <h4>Luxury Shortlets</h4>
-                                <p>30 Properties</p>
+                                <p>{{ \App\Models\Property::whereIn('property_type', config('property_types.shortlet_types', []))->count() }} Properties</p>
                             </div>
-                            <a href="{{ route('shortlets.index', ['type' => 'luxury']) }}" class="button-arrow-right"><i class="icon-arrow-right-add"></i></a>
+                            <a href="{{ route('shortlets.index') }}" class="button-arrow-right"><i class="icon-arrow-right-add"></i></a>
                         </div>
                     </div>
                 </div>
@@ -71,7 +71,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="heading-section text-center">
-                        <h2 class="wow fadeInUp">Homes For You</h2>
+                        <h2 class="wow fadeInUp">Properties For You</h2>
                         <div class="text wow fadeInUp">Handpicked properties that match your lifestyle</div>
                     </div>
                 </div>
@@ -92,6 +92,54 @@
         </div>
     </section>
     <!-- /flat-homes -->
+                <!-- download-app -->
+                <section class="tf-section-default">
+                    <div class="cl-container">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="download-app">
+                                    <div class="content-right col-md-6">
+                                        <div class="sub wow fadeInUp">Our Story</div>
+                                        <div class="heading wow fadeInUp" style="font-size: 2rem; line-height: 1.2;margin-bottom:20px">Meet Yewande Akinyemi — Founder, SP Group</div>
+                                        <p class="wow fadeInUp">
+                                            A visionary entrepreneur and modern-day trailblazer, Yewande Akinyemi leads SP Group, a dynamic brand spanning real estate, interior decoration, cleaning and fumigation, and fashion design. Since beginning her real estate journey in 2017, she has helped over 500 families in Nigeria and the diaspora become proud homeowners — earning multiple awards from leading firms like Landwey Investment, Bricks and Fabrics, Softwaves Innovative Concept, and Bold Consulting.
+                                        </p><p class="wow fadeInUp">
+Yewande’s drive for excellence and integrity reflects in every brand she leads. A Business Administration graduate of Bowen University, with further studies in Real Estate, Interior Design, Pest Control, AI Advancement, and Business Management, she continues to embody her mission
+                                        </p>
+                                        {{-- <ul class="ft-download style-1">
+                                            <li class="wow fadeInUp">
+                                                <a href="#">
+                                                    <div class="icon">
+                                                        <i class="icon-appleinc"></i>
+                                                    </div>
+                                                    <div class="app">
+                                                        <div>Download on the</div>
+                                                        <div>Apple Store</div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            <li class=" wow fadeInUp" data-wow-delay="0.1s">
+                                                <a href="#">
+                                                    <div class="icon">
+                                                        <i class="icon-ch-play"></i>
+                                                    </div>
+                                                    <div class="app">
+                                                        <div>Get in on</div>
+                                                        <div>Google Play</div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        </ul> --}}
+                                    </div>
+                                    <div class="image wow fadeInRight">
+                                        <img src="images/section/wande.webp" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- /download-app -->
 
     <!-- luxury-home -->
     <section class="tf-section luxury-home style-5">

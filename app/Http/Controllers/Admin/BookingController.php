@@ -22,7 +22,8 @@ class BookingController extends Controller
      */
     public function create()
     {
-        $properties = \App\Models\Property::where('property_type', 'shortlet')->get();
+        $shortletTypes = config('property_types.shortlet_types', []);
+        $properties = \App\Models\Property::whereIn('property_type', $shortletTypes)->get();
         return view('admin.bookings.create', compact('properties'));
     }
 
@@ -61,7 +62,8 @@ class BookingController extends Controller
      */
     public function edit(Booking $booking)
     {
-        $properties = \App\Models\Property::where('property_type', 'shortlet')->get();
+        $shortletTypes = config('property_types.shortlet_types', []);
+        $properties = \App\Models\Property::whereIn('property_type', $shortletTypes)->get();
         return view('admin.bookings.edit', compact('booking', 'properties'));
     }
 

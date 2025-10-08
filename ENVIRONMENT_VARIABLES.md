@@ -24,6 +24,10 @@ FACEBOOK_URL="https://facebook.com/strategicpillars"
 TWITTER_URL="https://twitter.com/strategicpillars"
 INSTAGRAM_URL="https://instagram.com/strategicpillars"
 LINKEDIN_URL="https://linkedin.com/company/strategicpillars"
+
+# Image Optimization Settings
+IMAGE_DRIVER="gd"
+IMAGE_QUALITY="85"
 ```
 
 ## Usage in Views

@@ -79,9 +79,6 @@
     <script src="{{ asset('/js/swiper.js') }}"></script>
     <script src="{{ asset('/js/countto.js') }}"></script>
     <script src="{{ asset('/js/circletype.min.js') }}"></script>
-    <script src="{{ asset('/js/maps.js') }}"></script>
-    <script src="{{ asset('/js/marker.js') }}"></script>
-    <script src="{{ asset('/js/infobox.min.js') }}"></script>
     <script src="{{ asset('/js/magnific-popup.min.js') }}"></script>
     <script src="{{ asset('/js/apexcharts.js') }}"></script>
     <script src="{{ asset('/js/area-chart.js') }}"></script>

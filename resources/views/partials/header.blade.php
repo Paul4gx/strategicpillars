@@ -13,7 +13,7 @@
                         <a href="{{ route('home') }}">Home</a>
                     </li>
                     <li class="{{ request()->is('company.about') ? 'current' : '' }}">
-                        <a href="javascript:void(0);">About Us</a>
+                        <a href="{{ route('company.about') }}">About Us</a>
                     </li>
                     <li class="has-children">
                         <a href="javascript:void(0);">Services</a>
@@ -24,36 +24,9 @@
                             <li><a href="https://thecleancrew.ng">The Clean Crew</a></li>
                         </ul>
                     </li>
-                    {{-- <li class="has-children {{ request()->is('properties*') || request()->is('estates*') ? 'current' : '' }}">
-                        <a href="javascript:void(0);">Properties</a>
-                        <ul class="mega-menu">
-                            <li>
-                                <ul>
-                                    <li class="title">List view</li>
-                                    <li><a href="{{ route('properties.index') }}">Property List</a></li>
-                                    <li><a href="{{ route('estates.index') }}">Estates</a></li>
-                                </ul>
-                            </li>
-                            <li>
-                                <ul>
-                                    <li class="title">Property Types</li>
-                                    <li><a href="{{ route('properties.index', ['type' => 'apartment']) }}">Apartments</a></li>
-                                    <li><a href="{{ route('properties.index', ['type' => 'office']) }}">Office</a></li>
-                                    <li><a href="{{ route('properties.index', ['type' => 'duplex']) }}">Duplex</a></li>
-                                    <li><a href="{{ route('properties.index', ['type' => 'bungalow']) }}">Bungalow</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li> --}}
                     <li class="{{ request()->is('agents*') ? 'current' : '' }}">
                         <a href="{{ route('agents.index') }}">Team</a>
                     </li>
-                    {{-- <li class="{{ request()->is('shortlets*') ? 'current' : '' }}">
-                        <a href="{{ route('shortlets.index') }}">Shortlets</a>
-                    </li>
-                    <li class="{{ request()->is('interiors*') ? 'current' : '' }}">
-                        <a href="{{ route('interiors.index') }}">Interiors</a>
-                    </li> --}}
                     <li class="{{ request()->is('company.contact') ? 'current' : '' }}">
                         <a href="{{ route('company.contact') }}">Contact Us</a>
                     </li>
@@ -86,42 +59,23 @@
             <li class="{{ request()->is('/') ? 'current' : '' }}">
                 <a href="{{ route('home') }}">Home</a>
             </li>
-            <li class="{{ request()->is('properties*') || request()->is('estates*') ? 'current' : '' }}">
-                <span>Properties</span>
+            <li class="{{ request()->is('company.about') ? 'current' : '' }}">
+                <a href="{{ route('company.about') }}">About Us</a>
+            </li>
+            <li class="has-children">
+                <a href="javascript:void(0);">Services</a>
                 <ul>
-                    <li>
-                        <span>List view</span>
-                        <ul>
-                            <li><a href="{{ route('properties.index') }}">Property List</a></li>
-                            <li><a href="{{ route('estates.index') }}">Estates</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <span>Property Types</span>
-                        <ul>
-                            <li><a href="{{ route('properties.index', ['type' => 'apartment']) }}">Apartments</a></li>
-                            <li><a href="{{ route('properties.index', ['type' => 'office']) }}">Office</a></li>
-                            <li><a href="{{ route('properties.index', ['type' => 'duplex']) }}">Duplex</a></li>
-                            <li><a href="{{ route('properties.index', ['type' => 'bungalow']) }}">Bungalow</a></li>
-                        </ul>
-                    </li>
+                    <li><a href="{{ route('properties.index') }}">Real Estates</a></li>
+                    <li><a href="{{ route('interiors.index') }}">Interior Design</a></li>
+                    <li><a href="{{ route('shortlets.index') }}">Shortlets</a></li>
+                    <li><a href="https://thecleancrew.ng">The Clean Crew</a></li>
                 </ul>
             </li>
             <li class="{{ request()->is('agents*') ? 'current' : '' }}">
-               <a href="{{ route('agents.index') }}">Realtors</a>
+                <a href="{{ route('agents.index') }}">Team</a>
             </li>
-            <li class="{{ request()->is('company*') ? 'current' : '' }}">
-                <span>Company</span>
-                <ul>
-                    <li><a href="{{ route('company.about') }}">About Us</a></li>
-                    <li><a href="{{ route('company.contact') }}">Contact Us</a></li>
-                </ul>
-            </li>
-            <li class="{{ request()->is('shortlets*') ? 'current' : '' }}">
-                <a href="{{ route('shortlets.index') }}">Shortlets</a>
-            </li>
-            <li class="{{ request()->is('interiors*') ? 'current' : '' }}">
-                <a href="{{ route('interiors.index') }}">Interiors</a>
+            <li class="{{ request()->is('company.contact') ? 'current' : '' }}">
+                <a href="{{ route('company.contact') }}">Contact Us</a>
             </li>
         </ul>
     </nav>

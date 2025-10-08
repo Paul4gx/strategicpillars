@@ -7,9 +7,49 @@ use App\Models\Property;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class PropertyController extends Controller
 {
+    /**
+     * Image manager instance
+     */
+    protected $imageManager;
+
+    public function __construct()
+    {
+        $this->imageManager = new ImageManager(new Driver());
+    }
+
+    /**
+     * Optimize and resize image
+     */
+    protected function optimizeImage($imageFile, $maxWidth = 1200, $maxHeight = 900, $quality = 85)
+    {
+        $image = $this->imageManager->read($imageFile);
+        
+        // Resize image while maintaining aspect ratio
+        $image->scaleDown($maxWidth, $maxHeight);
+        
+        // Optimize quality and encode to string
+        return $image->toJpeg($quality)->toString();
+    }
+
+    /**
+     * Create thumbnail
+     */
+    protected function createThumbnail($imageFile, $width = 300, $height = 300, $quality = 80)
+    {
+        $image = $this->imageManager->read($imageFile);
+        
+        // Resize and crop to exact dimensions for thumbnail
+        $image->cover($width, $height);
+        
+        // Optimize quality and encode to string
+        return $image->toJpeg($quality)->toString();
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -39,8 +79,9 @@ class PropertyController extends Controller
             'long_description' => 'nullable|string',
             'status' => 'required|in:available,sold,rented,off-plan,upcoming',
             'price' => 'required|numeric',
+            'currency' => 'required|in:NGN,USD',
             'discount_price' => 'nullable|numeric',
-            'property_type' => 'required|string|max:255',
+            'property_type' => 'required|string|in:' . implode(',', array_keys(config('property_types.flat_list'))),
             'bedrooms' => 'nullable|integer',
             'bathrooms' => 'nullable|integer',
             'parking_spaces' => 'nullable|integer',
@@ -73,12 +114,24 @@ class PropertyController extends Controller
 
         $property->save();
 
-        // Handle images upload
+        // Handle images upload with optimization
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $imagePath = $image->store('uploads/properties', 'public');
+                // Generate unique filename
+                $filename = uniqid() . '_' . time() . '.jpg';
+                
+                // Optimize main image
+                $optimizedImage = $this->optimizeImage($image, 1200, 900, 85);
+                $mainImagePath = 'uploads/properties/' . $filename;
+                Storage::disk('public')->put($mainImagePath, $optimizedImage);
+                
+                // Create thumbnail
+                $thumbnailImage = $this->createThumbnail($image, 300, 300, 80);
+                $thumbnailPath = 'uploads/properties/thumbnails/' . $filename;
+                Storage::disk('public')->put($thumbnailPath, $thumbnailImage);
+                
                 $property->images()->create([
-                    'image_path' => basename($imagePath)
+                    'image_path' => $filename
                 ]);
             }
         }
@@ -116,8 +169,9 @@ class PropertyController extends Controller
             'long_description' => 'nullable|string',
             'status' => 'required|in:available,sold,rented,off-plan,upcoming',
             'price' => 'required|numeric',
+            'currency' => 'required|in:NGN,USD',
             'discount_price' => 'nullable|numeric',
-            'property_type' => 'required|string|max:255',
+            'property_type' => 'required|string|in:' . implode(',', array_keys(config('property_types.flat_list'))),
             'bedrooms' => 'nullable|integer',
             'bathrooms' => 'nullable|integer',
             'parking_spaces' => 'nullable|integer',
@@ -149,12 +203,24 @@ class PropertyController extends Controller
 
         $property->save();
 
-        // Handle new images upload
+        // Handle new images upload with optimization
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $imagePath = $image->store('uploads/properties', 'public');
+                // Generate unique filename
+                $filename = uniqid() . '_' . time() . '.jpg';
+                
+                // Optimize main image
+                $optimizedImage = $this->optimizeImage($image, 1200, 900, 85);
+                $mainImagePath = 'uploads/properties/' . $filename;
+                Storage::disk('public')->put($mainImagePath, $optimizedImage);
+                
+                // Create thumbnail
+                $thumbnailImage = $this->createThumbnail($image, 300, 300, 80);
+                $thumbnailPath = 'uploads/properties/thumbnails/' . $filename;
+                Storage::disk('public')->put($thumbnailPath, $thumbnailImage);
+                
                 $property->images()->create([
-                    'image_path' => basename($imagePath)
+                    'image_path' => $filename
                 ]);
             }
         }
@@ -174,8 +240,11 @@ class PropertyController extends Controller
     {
         $image = \App\Models\PropertyImage::findOrFail($id);
         $property = $image->property;
-        // Delete the file from storage
+        
+        // Delete the main image and thumbnail from storage
         Storage::disk('public')->delete('uploads/properties/' . $image->image_path);
+        Storage::disk('public')->delete('uploads/properties/thumbnails/' . $image->image_path);
+        
         $image->delete();
         return redirect()->route('admin.properties.edit', $property)->with('success', 'Image deleted successfully!');
     }

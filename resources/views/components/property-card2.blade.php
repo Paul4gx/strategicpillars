@@ -18,7 +18,7 @@
                                                                                @foreach($property->images as $image)
                                                                                 <div class="swiper-slide">
                                                                                     <div class="w-full">
-                                                                                        <img class="w-full" src="{{ asset('/storage/uploads/properties/'.$image->image_path) }}" alt="{{ $property->title }}">
+                                                                                        <img class="w-full" src="{{ $image->thumbnail_url }}" alt="{{ $property->title }}" loading="lazy">
                                                                                     </div>
                                                                                 </div>
                                                                                 @endforeach
@@ -35,9 +35,9 @@
                                                             </div>
                                                             <div class="price">
                                                                 @if($property->status === 'For Rent')
-                                                                    ${{ number_format($property->price) }}/month
+                                                                    {{ $property->formatted_price }}/month
                                                                 @else
-                                                                    ${{ number_format($property->price) }}
+                                                                    {{ $property->formatted_price }}
                                                                 @endif
                                                             </div>
                                                         </div>

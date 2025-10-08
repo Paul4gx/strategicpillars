@@ -57,8 +57,11 @@
                                     <div class="title">Type</div>
                                     <select name="type" class="nice-select style-white">
                                         <option value="">All Type</option>
-                                        @foreach($propertyTypes as $type)
-                                            <option value="{{ $type }}" @if(request('type') == $type) selected @endif>{{ $type }}</option>
+                                        @php
+                                            $allPropertyTypes = config('property_types.flat_list', []);
+                                        @endphp
+                                        @foreach($allPropertyTypes as $typeKey => $typeLabel)
+                                            <option value="{{ $typeKey }}" @if(request('type') == $typeKey) selected @endif>{{ $typeLabel }}</option>
                                         @endforeach
                                     </select>
                                 </div>

@@ -69,10 +69,12 @@
                                                         <div class="title">Type</div>
                                                         <select name="type" class="nice-select style-white">
                                                             <option value="">All Type</option>
-                                                            <option value="Apartment" @if(request('type') == 'Apartment') selected @endif>Apartment</option>
-                                                            <option value="Villa" @if(request('type') == 'Villa') selected @endif>Villa</option>
-                                                            <option value="Townhouse" @if(request('type') == 'Townhouse') selected @endif>Townhouse</option>
-                                                            <option value="Single Family" @if(request('type') == 'Single Family') selected @endif>Single Family</option>
+                                                            @php
+                                                                $propertyTypes = config('property_types.flat_list', []);
+                                                            @endphp
+                                                            @foreach($propertyTypes as $typeKey => $typeLabel)
+                                                                <option value="{{ $typeKey }}" @if(request('type') == $typeKey) selected @endif>{{ $typeLabel }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
@@ -164,12 +166,14 @@
                                                 <div class="group-form">
                                                     <div class="form-style-has-title">
                                                         <div class="title">Type</div>
-                                                        <select name="type" class="nice-select style-white">
+                                                        <select name="type" class="nice-select">
                                                             <option value="">All Type</option>
-                                                            <option value="Apartment" @if(request('type') == 'Apartment') selected @endif>Apartment</option>
-                                                            <option value="Villa" @if(request('type') == 'Villa') selected @endif>Villa</option>
-                                                            <option value="Townhouse" @if(request('type') == 'Townhouse') selected @endif>Townhouse</option>
-                                                            <option value="Single Family" @if(request('type') == 'Single Family') selected @endif>Single Family</option>
+                                                            @php
+                                                                $propertyTypes = config('property_types.flat_list', []);
+                                                            @endphp
+                                                            @foreach($propertyTypes as $typeKey => $typeLabel)
+                                                                <option value="{{ $typeKey }}" @if(request('type') == $typeKey) selected @endif>{{ $typeLabel }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
@@ -260,7 +264,7 @@
                                                 <div class="group-form">
                                                     <div class="form-style-has-title">
                                                         <div class="title">City</div>
-                                                        <select name="city" class="nice-select style-white">
+                                                        <select name="city" class="nice-select">
                                                             <option value="">All Cities</option>
                                                             <option value="Victoria Island" @if(request('city') == 'Victoria Island') selected @endif>Victoria Island</option>
                                                             <option value="Ikoyi" @if(request('city') == 'Ikoyi') selected @endif>Ikoyi</option>

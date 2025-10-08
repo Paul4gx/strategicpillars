@@ -18,6 +18,39 @@
                     </div>
                 </section>
                 <!-- /flat-title -->
+ <!-- luxury-home -->
+ <section class="tf-section luxury-home style-5">
+    <div class="cl-container">
+        <div class="row justify-between">
+            <div class="col-md-4">
+                <div class="image wow fadeInLeft">
+                    <img src="{{asset('images/wande.webp')}}" alt="">
+                </div>
+            </div>
+            <div class="col-xl-8 col-md-8">
+                <div class="content pb-0">
+                    <h2 class="wow fadeInUp">Our Story</h2>
+                    <h5>About Yewande Akinyemi (Ajao) — Founder, SP Group</h5>
+                    <div class="text-content wow fadeInUp">Yewande Akinyemi - Ajao is a visionary entrepreneur and the powerhouse behind SP Group, a multi-sector brand redefining lifestyle and luxury across Nigeria — with strong footprints in real estate, interior decoration, cleaning and fumigation, and fashion design.</div>
+                    <div class="text-content wow fadeInUp">Her journey began in real estate in 2017, where her passion for genuine property investments and client satisfaction quickly distinguished her. Over the years, Yewande has helped more than 500 families, both in Nigeria and the diaspora, become proud homeowners. She is known for her commitment to verifying property authenticity, ensuring proper documentation, and supporting clients through seamless relocation into their new homes.</div>
+                    <div class="text-content wow fadeInUp">Her excellence has earned her multiple awards and recognition from industry leaders including Landwey Investment, Bricks and Fabrics, Softwaves Innovative Concept, Bold Consulting, and other renowned real estate development firms.</div>
+                    
+                </div>
+            </div>
+            <div class="col-xl-12 col-md-12 mt-md-5">
+                <div class="content">
+                    <div class="text-content wow fadeInUp">Yewande is a graduate of Bowen University, Iwo, Osun State, where she earned a Second Class Upper degree in Business Administration (2012). Her pursuit of knowledge is continuous — she has completed professional courses at the Real Estate Business School, Maryland, as well as in Interior Decoration, Pest Control, Artificial Intelligence Advancement, and Business Management. She is also currently pursuing her Master’s degree in Business Administration (MBA).
+                    </div><div class="text-content wow fadeInUp">Her academic and professional journey reflects her unwavering dedication to learning, innovation, and problem-solving, providing her clients and partners with intelligent, aesthetically-driven, and results-oriented solutions across all her ventures.
+                        <br> Through Strategic Pillars Realty Ltd, The Clean Crew, SP Interiors, and SP Fashion, Yewande continues to embody the SP Group’s philosophy.<p><em>Building, Beautifying, and Inspiring Better Living Experiences.</em></p></div>
+                    <a href="{{ route('properties.index') }}" class="tf-button-primary style-black wow fadeInUp">View Properties <i class="icon-arrow-right-add"></i></a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- /luxury-home -->
+
                                 <!-- vision-mission -->
                 <section class="tf-section vision-mission bg-light">
                     <div class="cl-container">
@@ -61,21 +94,21 @@
                                     <h2 class="wow fadeInUp">About Strategic Pillars</h2>
                                     <div class="text-content wow fadeInUp">Strategic Pillars is Nigeria's premier luxury real estate and interior design company, headquartered in Lagos. Since our establishment, we have been at the forefront of creating extraordinary living and working spaces that define luxury and sophistication. Our comprehensive portfolio spans luxury residential properties, commercial developments, shortlet apartments, and bespoke interior design solutions.</div>
                 
-                <h3 class="wow fadeInUp">Our Unique Approach</h3>
-                <div class="text-content wow fadeInUp">We believe that luxury is not just about expensive materials—it's about creating spaces that tell a story, reflect personality, and enhance lifestyle. Our multidisciplinary team of architects, interior designers, and real estate experts work collaboratively to deliver projects that exceed expectations while maintaining the highest standards of quality and craftsmanship.</div> 
-                                
-                <div class="col-md-12">
-                <h3 class="wow fadeInUp">Why Choose Strategic Pillars?</h3>
-                <ul class="list-text" style="gap:0;">
-                    <li class="wow fadeInUp"><p><strong>Luxury Expertise:</strong> Specialized knowledge in high-end real estate and interior design</p></li>
-                    <li class="wow fadeInUp"><p><strong>Innovative Solutions:</strong> Cutting-edge design and technology integration</p></li>
-                    <li class="wow fadeInUp"><p><strong>Premium Materials:</strong> Sourcing from renowned international suppliers</p></li>
-                    <li class="wow fadeInUp"><p><strong>Proven Track Record:</strong> Successfully completed projects across Lagos' most prestigious locations</p></li>
-                    <li class="wow fadeInUp"><p><strong>Personalized Service:</strong> Bespoke solutions tailored to each client's unique vision</p></li>
-                </ul>
-            </div>
-            <a href="{{ route('company.contact') }}" class="tf-button-primary style-black wow fadeInUp">Get In Touch <i class="icon-arrow-right-add"></i></a>
-            
+                                        <h3 class="wow fadeInUp">Our Unique Approach</h3>
+                                        <div class="text-content wow fadeInUp">We believe that luxury is not just about expensive materials—it's about creating spaces that tell a story, reflect personality, and enhance lifestyle. Our multidisciplinary team of architects, interior designers, and real estate experts work collaboratively to deliver projects that exceed expectations while maintaining the highest standards of quality and craftsmanship.</div> 
+                                                        
+                                        <div class="col-md-12">
+                                        <h3 class="wow fadeInUp">Why Choose Strategic Pillars?</h3>
+                                        <ul class="list-text" style="gap:0;">
+                                            <li class="wow fadeInUp"><p><strong>Luxury Expertise:</strong> Specialized knowledge in high-end real estate and interior design</p></li>
+                                            <li class="wow fadeInUp"><p><strong>Innovative Solutions:</strong> Cutting-edge design and technology integration</p></li>
+                                            <li class="wow fadeInUp"><p><strong>Premium Materials:</strong> Sourcing from renowned international suppliers</p></li>
+                                            <li class="wow fadeInUp"><p><strong>Proven Track Record:</strong> Successfully completed projects across Lagos' most prestigious locations</p></li>
+                                            <li class="wow fadeInUp"><p><strong>Personalized Service:</strong> Bespoke solutions tailored to each client's unique vision</p></li>
+                                        </ul>
+                                    </div>
+                                    <a href="{{ route('company.contact') }}" class="tf-button-primary style-black wow fadeInUp">Get In Touch <i class="icon-arrow-right-add"></i></a>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -97,54 +130,54 @@
                         <div class="row">
                             <div class="col-lg-4 col-md-6">
                                 <div class="services-box style-2 wow fadeInUp">
-                                    <div class="icon">
+                                    {{-- <div class="icon">
                                         <i class="flaticon-diamond"></i>
-                                    </div>
+                                    </div> --}}
                                     <h4>Excellence</h4>
                                     <p>We strive for perfection in every project, ensuring the highest quality standards and attention to detail in all our real estate and interior design solutions.</p>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-6">
                                 <div class="services-box style-2 wow fadeInUp" data-wow-delay="0.1s">
-                                    <div class="icon">
+                                    {{-- <div class="icon">
                                         <i class="flaticon-handshake"></i>
-                                    </div>
+                                    </div> --}}
                                     <h4>Integrity</h4>
                                     <p>We conduct business with complete transparency, honesty, and ethical practices, building lasting relationships based on trust and mutual respect.</p>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-6">
                                 <div class="services-box style-2 wow fadeInUp" data-wow-delay="0.2s">
-                                    <div class="icon">
+                                    {{-- <div class="icon">
                                         <i class="flaticon-lightbulb"></i>
-                                    </div>
+                                    </div> --}}
                                     <h4>Innovation</h4>
                                     <p>We embrace cutting-edge design trends, technology, and creative solutions to deliver unique and forward-thinking real estate and interior projects.</p>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-6">
                                 <div class="services-box style-2 wow fadeInUp" data-wow-delay="0.3s">
-                                    <div class="icon">
+                                    {{-- <div class="icon">
                                         <i class="flaticon-customer"></i>
-                                    </div>
+                                    </div> --}}
                                     <h4>Customer Focus</h4>
                                     <p>Our clients are at the heart of everything we do. We listen, understand, and deliver personalized solutions that exceed their expectations.</p>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-6">
                                 <div class="services-box style-2 wow fadeInUp" data-wow-delay="0.4s">
-                                    <div class="icon">
+                                    {{-- <div class="icon">
                                         <i class="flaticon-crown"></i>
-                                    </div>
+                                    </div> --}}
                                     <h4>Luxury</h4>
                                     <p>We specialize in creating extraordinary spaces that define luxury living, using premium materials and sophisticated design principles.</p>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-6">
                                 <div class="services-box style-2 wow fadeInUp" data-wow-delay="0.5s">
-                                    <div class="icon">
+                                    {{-- <div class="icon">
                                         <i class="flaticon-target"></i>
-                                    </div>
+                                    </div> --}}
                                     <h4>Commitment</h4>
                                     <p>We are dedicated to delivering projects on time, within budget, and to the highest standards, ensuring complete client satisfaction.</p>
                                 </div>

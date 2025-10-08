@@ -57,9 +57,9 @@
             </div>
             <div class="price">
                 @if($property->status === 'For Rent')
-                    ${{ number_format($property->price) }}/month
+                    {{ $property->formatted_price }}/month
                 @else
-                    ${{ number_format($property->price) }}
+                    {{ $property->formatted_price }}
                 @endif
             </div>
         </div>

@@ -9,7 +9,8 @@ class ShortletController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Property::with('images')->where('property_type', 'Shortlet');
+        $shortletTypes = config('property_types.shortlet_types', []);
+        $query = Property::with('images')->whereIn('property_type', $shortletTypes);
         
         // Keyword search
         if ($request->filled('keyword')) {
@@ -72,18 +73,19 @@ class ShortletController extends Controller
         $shortlets = $query->latest()->paginate(12);
         
         // Get unique cities for filter dropdown
-        $cities = Property::select('city')->where('property_type', 'Shortlet')->whereNotNull('city')->distinct()->pluck('city');
+        $cities = Property::select('city')->whereIn('property_type', $shortletTypes)->whereNotNull('city')->distinct()->pluck('city');
         
         return view('shortlets.index', compact('shortlets', 'cities'));
     }
 
     public function show($slug)
     {
-        $shortlet = Property::where('slug', $slug)->where('property_type', 'Shortlet')->with(['images', 'estate'])->firstOrFail();
+        $shortletTypes = config('property_types.shortlet_types', []);
+        $shortlet = Property::where('slug', $slug)->whereIn('property_type', $shortletTypes)->with(['images', 'estate'])->firstOrFail();
         
         // Get similar shortlets (same property type, excluding current shortlet, limit to 4)
         $similarShortlets = Property::with('images')
-            ->where('property_type', 'Shortlet')
+            ->whereIn('property_type', $shortletTypes)
             ->where('id', '!=', $shortlet->id)
             ->where('status', '!=', 'sold')
             ->where('status', '!=', 'rented')

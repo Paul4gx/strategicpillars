@@ -140,9 +140,40 @@
         {{-- <label>Status</label> --}}
         @error('status')<div class="text-danger">{{ $message }}</div>@enderror
     </fieldset>
-    <x-text-input2 title="Price" name="price" type="number" :value="old('price')" required />
+    <div class="row mb-3">
+        <fieldset class="col-md-8 mb-15">
+            <x-text-input2 title="Price" name="price" type="number" :value="old('price')" required />
+        </fieldset>
+        <fieldset class="col-md-4 mb-15">
+            <select name="currency" class="form-select nice-select" required>
+                <option value="NGN" {{ old('currency', 'NGN') == 'NGN' ? 'selected' : '' }}>₦ Naira (NGN)</option>
+                <option value="USD" {{ old('currency') == 'USD' ? 'selected' : '' }}>$ Dollar (USD)</option>
+            </select>
+            <label>Currency</label>
+            @error('currency')<div class="text-danger">{{ $message }}</div>@enderror
+        </fieldset>
+    </div>
     <x-text-input2 title="Discount Price (optional)" name="discount_price" type="number" :value="old('discount_price')" />
-    <x-text-input2 title="Property Type" name="property_type" :value="old('property_type')" required />
+    
+    <fieldset class="mb-15">
+        <select name="property_type" class="form-select nice-select" required>
+            <option value="">Select Property Type</option>
+            @php
+                $groupedTypes = \App\Models\Property::getGroupedPropertyTypes();
+            @endphp
+            @foreach($groupedTypes as $categoryKey => $category)
+                <optgroup label="{{ $category['label'] }}">
+                    @foreach($category['options'] as $typeKey => $typeLabel)
+                        <option value="{{ $typeKey }}" {{ old('property_type') == $typeKey ? 'selected' : '' }}>
+                            {{ $typeLabel }}
+                        </option>
+                    @endforeach
+                </optgroup>
+            @endforeach
+        </select>
+        <label>Property Type</label>
+        @error('property_type')<div class="text-danger">{{ $message }}</div>@enderror
+    </fieldset>
     <div class="row mb-3">
         <fieldset class="col-md-4 mb-15">
             <x-text-input2 title="Bedrooms" name="bedrooms" type="number" :value="old('bedrooms')" />

@@ -54,3 +54,4 @@ class ContactHelper
         return str_replace('+', '', config('settings.contact.whatsapp'));
     }
 }
+
