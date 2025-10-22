@@ -100,7 +100,118 @@ class PropertyController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store property data only (Step 1 of two-step process)
+     */
+    public function storeData(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'short_description' => 'nullable|string|max:255',
+                'long_description' => 'nullable|string',
+                'status' => 'required|in:available,sold,rented,off-plan,upcoming',
+                'price' => 'required|numeric',
+                'currency' => 'required|in:NGN,USD',
+                'discount_price' => 'nullable|numeric',
+                'property_type' => 'required|string|in:' . implode(',', array_keys(config('property_types.flat_list'))),
+                'bedrooms' => 'nullable|integer',
+                'bathrooms' => 'nullable|integer',
+                'parking_spaces' => 'nullable|integer',
+                'address' => 'nullable|string|max:255',
+                'city' => 'nullable|string|max:255',
+                'state' => 'nullable|string|max:255',
+                'estate_id' => 'nullable|exists:estates,id',
+                'featured' => 'nullable|boolean',
+                'video_link' => 'nullable|string|max:255',
+                'brochure' => 'nullable|file|mimes:pdf',
+                'seo_title' => 'nullable|string|max:255',
+                'seo_description' => 'nullable|string|max:255',
+                'year_built' => 'nullable|integer|min:1900|max:2030',
+                'area' => 'nullable|integer|min:1',
+                'property_features' => 'nullable|array',
+                'property_features.*' => 'string|max:255',
+                'building_type' => 'nullable|in:office,home,complex,others',
+            ]);
+
+            $property = new \App\Models\Property($validated);
+            $property->slug = Str::slug($request->title) . '-' . uniqid();
+            $property->featured = $request->has('featured');
+
+            // Handle brochure upload
+            if ($request->hasFile('brochure')) {
+                $brochurePath = $request->file('brochure')->store('uploads/brochures', 'public');
+                $property->brochure = basename($brochurePath);
+            }
+
+            $property->save();
+
+            return response()->json([
+                'success' => true,
+                'property_id' => $property->id,
+                'message' => 'Property data saved successfully!'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Property data creation error: ' . $e->getMessage(), [
+                'request_data' => $request->except(['brochure']),
+                'error' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to save property data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Store images for existing property (Step 2 of two-step process)
+     */
+    public function storeImages(Request $request, $propertyId)
+    {
+        try {
+            $property = \App\Models\Property::findOrFail($propertyId);
+            
+            $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240' // 10MB max - matches existing system
+            ]);
+
+            $image = $request->file('image');
+            $filename = uniqid() . '_' . time() . '.jpg';
+            
+            // Optimize image with same settings as existing system
+            $optimizedImage = $this->optimizeImage($image, 1200, 900, 85);
+            $mainImagePath = 'uploads/properties/' . $filename;
+            Storage::disk('public')->put($mainImagePath, $optimizedImage);
+            
+            // Create thumbnail with same settings as existing system
+            $thumbnailImage = $this->createThumbnail($image, 300, 300, 80);
+            $thumbnailPath = 'uploads/properties/thumbnails/' . $filename;
+            Storage::disk('public')->put($thumbnailPath, $thumbnailImage);
+            
+            $property->images()->create(['image_path' => $filename]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Image uploaded successfully',
+                'filename' => $filename
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Image upload error: ' . $e->getMessage(), [
+                'property_id' => $propertyId,
+                'error' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to upload image: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage (Legacy method - kept for compatibility)
      */
     public function store(Request $request)
     {
@@ -212,7 +323,79 @@ class PropertyController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update property data only (Step 1 of two-step edit process)
+     */
+    public function updateData(Request $request, $id)
+    {
+        try {
+            $property = \App\Models\Property::findOrFail($id);
+            
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'short_description' => 'nullable|string|max:255',
+                'long_description' => 'nullable|string',
+                'status' => 'required|in:available,sold,rented,off-plan,upcoming',
+                'price' => 'required|numeric',
+                'currency' => 'required|in:NGN,USD',
+                'discount_price' => 'nullable|numeric',
+                'property_type' => 'required|string|in:' . implode(',', array_keys(config('property_types.flat_list'))),
+                'bedrooms' => 'nullable|integer',
+                'bathrooms' => 'nullable|integer',
+                'parking_spaces' => 'nullable|integer',
+                'address' => 'nullable|string|max:255',
+                'city' => 'nullable|string|max:255',
+                'state' => 'nullable|string|max:255',
+                'estate_id' => 'nullable|exists:estates,id',
+                'featured' => 'nullable|boolean',
+                'video_link' => 'nullable|string|max:255',
+                'brochure' => 'nullable|file|mimes:pdf',
+                'seo_title' => 'nullable|string|max:255',
+                'seo_description' => 'nullable|string|max:255',
+                'year_built' => 'nullable|integer|min:1900|max:2030',
+                'area' => 'nullable|integer|min:1',
+                'property_features' => 'nullable|array',
+                'property_features.*' => 'string|max:255',
+                'building_type' => 'nullable|in:office,home,complex,others',
+            ]);
+
+            // Update property data
+            $property->fill($validated);
+            $property->featured = $request->has('featured');
+
+            // Handle brochure upload
+            if ($request->hasFile('brochure')) {
+                // Delete old brochure if exists
+                if ($property->brochure) {
+                    Storage::disk('public')->delete('uploads/brochures/' . $property->brochure);
+                }
+                $brochurePath = $request->file('brochure')->store('uploads/brochures', 'public');
+                $property->brochure = basename($brochurePath);
+            }
+
+            $property->save();
+
+            return response()->json([
+                'success' => true,
+                'property_id' => $property->id,
+                'message' => 'Property data updated successfully!'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Property data update error: ' . $e->getMessage(), [
+                'property_id' => $id,
+                'request_data' => $request->except(['brochure']),
+                'error' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update property data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage (Legacy method - kept for compatibility)
      */
     public function update(Request $request, $id)
     {

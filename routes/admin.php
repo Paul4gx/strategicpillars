@@ -6,6 +6,14 @@ use App\Http\Controllers\Admin\DashboardController;
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('properties', App\Http\Controllers\Admin\PropertyController::class);
+    
+    // Two-step property creation routes
+    Route::post('properties/store-data', [App\Http\Controllers\Admin\PropertyController::class, 'storeData'])->name('properties.store-data');
+    Route::post('properties/store-images/{property}', [App\Http\Controllers\Admin\PropertyController::class, 'storeImages'])->name('properties.store-images');
+    
+    // Two-step property editing routes
+    Route::put('properties/update-data/{property}', [App\Http\Controllers\Admin\PropertyController::class, 'updateData'])->name('properties.update-data');
+    
     // Other admin routes will go here
     Route::delete('properties/image/{id}', [App\Http\Controllers\Admin\PropertyController::class, 'deleteImage'])->name('properties.deleteImage');
     Route::resource('estates', App\Http\Controllers\Admin\EstateController::class);
