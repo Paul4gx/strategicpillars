@@ -443,6 +443,7 @@ Dropzone.autoDiscover = false;
 
 document.addEventListener("DOMContentLoaded", function () {
     let form = document.querySelector("#property-form");
+    let isSubmitting = false;
 
     let myDropzone = new Dropzone("#property-dropzone", {
         url: form.action,             // Laravel route
@@ -464,9 +465,15 @@ document.addEventListener("DOMContentLoaded", function () {
     form.addEventListener("submit", function (e) {
         e.preventDefault();
 
+        if (isSubmitting) {
+            return; // Prevent multiple submissions
+        }
+
         if (myDropzone.getQueuedFiles().length > 0) {
+            isSubmitting = true;
             myDropzone.processQueue();
         } else {
+            isSubmitting = true;
             form.submit(); // no images, just submit form
         }
     });
@@ -493,12 +500,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // On success, redirect or show message
     myDropzone.on("successmultiple", function (files, response) {
+        isSubmitting = false;
         window.location.href = "{{ route('admin.properties.index') }}";
     });
 
     myDropzone.on("errormultiple", function (files, response) {
         console.error(response);
-        alert("Error uploading property");
+        
+        // Parse error response for better user feedback
+        let errorMessage = "Error uploading property";
+        if (response && response.message) {
+            errorMessage = response.message;
+        } else if (response && response.errors) {
+            // Handle validation errors
+            const errors = Object.values(response.errors).flat();
+            errorMessage = errors.join(', ');
+        }
+        
+        alert("Error: " + errorMessage);
+        
+        // Re-enable form submission
+        isSubmitting = false;
     });
 });
 </script>

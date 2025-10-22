@@ -56,6 +56,31 @@
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
                     </div>
                 </div>
+                <nav id="menu">
+                    {{-- <a class="close" aria-label="Close menu" href="#mm-22">
+                        <i class="icon-close"></i>
+                    </a> --}}
+                    <ul>
+                        <li class="@if(request()->routeIs('admin.dashboard')) active @endif">
+                            <a href="{{ route('admin.dashboard') }}"><i class="flaticon-house"></i> Dashboard</a>
+                        </li>
+                        <li class="@if(request()->routeIs('admin.team-members.*')) active @endif">
+                            <a href="{{ route('admin.team.index') }}"><i class="flaticon-user"></i> Team</a>
+                        </li>
+                        {{-- <li class="@if(request()->routeIs('admin.bookings.*')) active @endif">
+                            <a href="{{ route('admin.bookings.index') }}"><i class="flaticon-chat-bubble"></i>Bookings</a>
+                        </li> --}}
+                        <li class="@if(request()->routeIs('admin.properties.*')) active @endif">
+                            <a href="{{ route('admin.properties.index') }}"><i class="flaticon-home-2"></i> Properties</a>
+                        </li>
+                        <li class="@if(request()->routeIs('admin.estates.*')) active @endif">
+                            <a href="{{ route('admin.estates.index') }}"><i class="flaticon-layers-1"></i> Estates</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="flaticon-logout"></i> Logout</a>
+                        </li>
+                    </ul>
+                </nav>
             </header>
             <!-- /header -->
             <div class="main-content spacing-20">

@@ -52,9 +52,9 @@
         </div>
     </div>
     <nav id="menu">
-        <a class="close" aria-label="Close menu" href="#mm-22">
+        {{-- <a class="close" aria-label="Close menu" href="#mm-22">
             <i class="icon-close"></i>
-        </a>
+        </a> --}}
         <ul>
             <li class="{{ request()->is('/') ? 'current' : '' }}">
                 <a href="{{ route('home') }}">Home</a>

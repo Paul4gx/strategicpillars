@@ -78,7 +78,7 @@
             <form action="{{ route('admin.properties.destroy', $property) }}" 
                   method="POST" 
                   class="delete-form"
-                  onsubmit="return confirm('Are you sure you want to delete this property?')">
+                  onsubmit="return confirmDelete('{{ $property->title }}')">
                 @csrf
                 @method('DELETE')
                 <button type="submit" 
@@ -90,6 +90,14 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+function confirmDelete(propertyTitle) {
+    return confirm(`Are you sure you want to delete "${propertyTitle}"?\n\nThis action cannot be undone and will permanently remove:\n• All property images\n• Property brochure\n• All associated data\n\nClick OK to delete or Cancel to keep the property.`);
+}
+</script>
+@endpush
 
 @push('styles')
 <style>
@@ -325,6 +333,12 @@
 .btn-delete:hover {
     background: #c82333;
     color: white;
+    transform: scale(1.05);
+}
+
+.btn-delete:active {
+    background: #a71e2a;
+    transform: scale(0.95);
 }
 
 .delete-form {
