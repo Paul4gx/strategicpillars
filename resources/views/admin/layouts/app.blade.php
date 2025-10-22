@@ -25,6 +25,9 @@
     @stack('styles')
 </head>
 <body class="body dashboard">
+    <div class="preload preload-container">
+        <div class="middle"></div>
+    </div>
     <div id="wrapper">
         <div id="page" class="layout-wrap background-F9F9F9">
             <!-- header -->

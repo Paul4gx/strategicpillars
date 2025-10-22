@@ -4,6 +4,7 @@
 @push('styles')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">
 <style>
 .amenity-category-collapsible {
     margin-bottom: 15px;
@@ -514,6 +515,95 @@
         display: none !important;
     }
 }
+
+/* ========================================
+   SUMMERNOTE EDITOR STYLES
+   ======================================== */
+
+.note-editor {
+    border: 1px solid #ddd !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.note-toolbar {
+    background: #f8f9fa !important;
+    border-bottom: 1px solid #ddd !important;
+    border-radius: 8px 8px 0 0 !important;
+    padding: 8px !important;
+}
+
+.note-editing-area {
+    border-radius: 0 0 8px 8px !important;
+}
+
+.note-editable {
+    padding: 15px !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    color: #333 !important;
+}
+
+.note-editable:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25) !important;
+}
+
+.note-btn {
+    border: 1px solid #ddd !important;
+    border-radius: 4px !important;
+    margin: 2px !important;
+    padding: 6px 8px !important;
+    background: #fff !important;
+    color: #333 !important;
+    transition: all 0.2s ease !important;
+}
+
+.note-btn:hover {
+    background: #e9ecef !important;
+    border-color: #adb5bd !important;
+}
+
+.note-btn.active {
+    background: #007bff !important;
+    border-color: #007bff !important;
+    color: #fff !important;
+}
+
+.note-dropdown-menu {
+    border: 1px solid #ddd !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    padding: 8px !important;
+}
+
+.note-dropdown-item {
+    padding: 6px 12px !important;
+    border-radius: 4px !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.note-dropdown-item:hover {
+    background: #f8f9fa !important;
+}
+
+/* Responsive Summernote */
+@media (max-width: 768px) {
+    .note-toolbar {
+        padding: 4px !important;
+    }
+    
+    .note-btn {
+        padding: 4px 6px !important;
+        font-size: 12px !important;
+    }
+    
+    .note-editable {
+        padding: 10px !important;
+        font-size: 13px !important;
+    }
+}
 </style>
 @endpush
 @section('content')
@@ -528,7 +618,11 @@
    @method('PUT')
     <x-text-input2 title="Title" name="title" :value="old('title', $property->title)" required />
     <x-text-input2 title="Short Description" name="short_description" :value="old('short_description', $property->short_description)" />
-    <x-textarea2 title="Long Description" name="long_description" :value="old('long_description', $property->long_description)" />
+    <fieldset class="text has-top-title">
+        <label>Long Description</label>
+        <textarea name="long_description" id="long_description" class="form-control summernote">{{ old('long_description', $property->long_description) }}</textarea>
+        @error('long_description')<div class="text-danger">{{ $message }}</div>@enderror
+    </fieldset>
     <fieldset class="text has-top-title">
         
         <select name="status" class="" name="text" tabindex="2" aria-required="true"  required>
@@ -918,6 +1012,7 @@
 
 @push('scripts')
 <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
 <script>
 // Collapsible amenities function
 function toggleAmenityCategory(categoryId) {
@@ -944,6 +1039,37 @@ document.addEventListener("DOMContentLoaded", function () {
             firstIcon.classList.add('rotated');
         }
     }
+    
+    // Initialize Summernote
+    $('#long_description').summernote({
+        height: 300,
+        minHeight: 200,
+        maxHeight: 500,
+        focus: false,
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+        ],
+        styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana'],
+        fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '24', '36', '48'],
+        callbacks: {
+            onInit: function() {
+                // Ensure the editor is properly initialized
+                console.log('Summernote initialized');
+            },
+            onChange: function(contents, $editable) {
+                // Update the textarea value when content changes
+                $('#long_description').val(contents);
+            }
+        }
+    });
 });
 
 Dropzone.autoDiscover = false;

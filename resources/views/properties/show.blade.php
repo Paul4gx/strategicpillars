@@ -3,6 +3,101 @@
 @section('title', $property->title . ' | Strategic Pillars')
 @section('meta_description', Str::limit($property->short_description, 150))
 
+@push('styles')
+<style>
+.long-description {
+    margin-top: 1rem;
+    line-height: 1.6;
+}
+
+.long-description h1,
+.long-description h2,
+.long-description h3,
+.long-description h4,
+.long-description h5,
+.long-description h6 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.long-description h1 { font-size: 1.8rem; }
+.long-description h2 { font-size: 1.6rem; }
+.long-description h3 { font-size: 1.4rem; }
+.long-description h4 { font-size: 1.2rem; }
+.long-description h5 { font-size: 1.1rem; }
+.long-description h6 { font-size: 1rem; }
+
+.long-description p {
+    margin-bottom: 1rem;
+    color: #666;
+}
+
+.long-description ul,
+.long-description ol {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+}
+
+.long-description li {
+    margin-bottom: 0.5rem;
+    color: #666;
+}
+
+.long-description table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+.long-description table th,
+.long-description table td {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.long-description table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.long-description a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.long-description a:hover {
+    text-decoration: underline;
+}
+
+.long-description strong {
+    font-weight: 600;
+    color: #333;
+}
+
+.long-description em {
+    font-style: italic;
+}
+
+.long-description blockquote {
+    margin: 1rem 0;
+    padding: 1rem;
+    border-left: 4px solid #007bff;
+    background-color: #f8f9fa;
+    font-style: italic;
+}
+
+.long-description img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+</style>
+@endpush
+
 @section('content')
                 <div class="property-single-wrap v2">
                     <div class="cl-container">
@@ -135,12 +230,14 @@
                                     </div>
                                     <div class="desc">
                                         <h4 class="wow fadeInUp">Description</h4>
-                                        <p class="wow fadeInUp">
-                                            {{$property->short_description}}
-                                            <br>
-                                            <br>
-                                            {{$property->long_description}}
-                                        </p>
+                                        <div class="wow fadeInUp">
+                                            <p>{{$property->short_description}}</p>
+                                            @if($property->long_description)
+                                                <div class="long-description">
+                                                    {!! $property->long_description !!}
+                                                </div>
+                                            @endif
+                                        </div>
                                     </div>
                                     <div class="address">
                                         <div class="flex items-center justify-between gap30 flex-wrap wow fadeInUp">
