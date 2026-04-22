@@ -10,10 +10,16 @@ class TeamMember extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'role', 'email', 'phone', 'bio', 'photo', 'social_links', 'sort_order'
+        'user_id',
+        'name', 'role', 'email', 'phone', 'bio', 'photo', 'social_links', 'sort_order',
     ];
 
     protected $casts = [
         'social_links' => 'array',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 } 

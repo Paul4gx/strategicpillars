@@ -119,14 +119,14 @@
                                             <p>Save</p>
                                         </div> --}}
                                         @auth
-                                        @if(auth()->user()->is_admin)
-                                            <div class="item" onclick="window.location.href='{{ route('admin.properties.edit', $property) }}'">
+                                        @can('update', $property)
+                                            <div class="item" onclick="window.location.href='{{ auth()->user()->isAdmin() ? route('admin.properties.edit', $property) : route('realtor.properties.edit', $property) }}'">
                                                     <div class="icon">
                                                         <i class="flaticon-edit"></i>
                                                     </div>
                                                     <p>Edit</p>
                                             </div>
-                                        @endif
+                                        @endcan
                                     @endauth
                                         <div class="item">
                                             <div class="icon">
@@ -151,10 +151,30 @@
                                     </div>
                                     <div class="wow fadeInUp">
                                         <div class="square">Price</div>
-                                        <div class="price">₦{{ number_format($property->price) }}</div>
+                                        <div class="price">{{ $property->currency_symbol }}{{ number_format($property->price) }}</div>
                                     </div>
                                 </div>
                             </div>
+                            @if($property->realtor)
+                            <div class="col-12">
+                                <div class="wg-box flex gap20 align-items-center flex-wrap" style="padding: 20px 24px; margin-bottom: 24px;">
+                                    @if($property->realtor->avatarUrl())
+                                        <img src="{{ $property->realtor->avatarUrl() }}" alt="{{ $property->realtor->publicBrandName() }}" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover;">
+                                    @else
+                                        <div class="d-flex align-items-center justify-content-center bg-light rounded-circle" style="width: 72px; height: 72px;">
+                                            <i class="flaticon-user" style="font-size: 28px; color: #999;"></i>
+                                        </div>
+                                    @endif
+                                    <div>
+                                        <div class="text-muted" style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em;">Listed by</div>
+                                        <div class="fw-semibold" style="font-size: 18px;">{{ $property->realtor->publicBrandName() }}</div>
+                                        @if($property->realtor->phone)
+                                            <a href="tel:{{ $property->realtor->phone }}" class="d-inline-block mt-4" style="color: #1563df;">{{ $property->realtor->phone }}</a>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
                         <div class="col-xl-8">
                                 <div class="content-wrap">
                                     <div class="thumbs-slider arrow-style-1">

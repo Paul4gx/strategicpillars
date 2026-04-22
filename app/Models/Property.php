@@ -5,16 +5,34 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Property extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected static function booted(): void
+    {
+        static::saving(function (Property $property) {
+            if (filled($property->title)) {
+                $property->seo_title = Str::limit((string) $property->title, 255);
+            }
+
+            $source = $property->short_description ?: $property->long_description;
+            if (filled($source)) {
+                $plain = strip_tags((string) $source);
+                $plain = trim(preg_replace('/\s+/u', ' ', $plain));
+                $property->seo_description = Str::limit($plain, 255);
+            }
+        });
+    }
+
     protected $fillable = [
+        'user_id',
         'title', 'slug', 'short_description', 'long_description', 'status', 'price', 'currency', 'discount_price',
         'property_type', 'bedrooms', 'bathrooms', 'parking_spaces', 'address', 'city', 'state',
         'estate_id', 'featured', 'video_link', 'brochure', 'seo_title', 'seo_description',
-        'year_built', 'area', 'property_features', 'building_type'
+        'year_built', 'area', 'property_features', 'building_type',
     ];
 
     protected $casts = [
@@ -103,6 +121,11 @@ class Property extends Model
     public static function getGroupedPropertyTypes()
     {
         return config('property_types.types', []);
+    }
+
+    public function realtor()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function estate()

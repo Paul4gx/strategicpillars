@@ -18,10 +18,7 @@ class RedirectIfAuthenticated
     {
         if (Auth::check()) {
             // If user is already authenticated, redirect to appropriate dashboard
-            if (Auth::user()->is_admin) {
-                return redirect()->route('admin.dashboard');
-            }
-            return redirect()->route('dashboard');
+            return redirect()->to(Auth::user()->intendedDashboardUrl());
         }
 
         return $next($request);

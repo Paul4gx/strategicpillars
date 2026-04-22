@@ -2,16 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreTeamMemberRequest;
+use App\Http\Requests\UpdateTeamMemberRequest;
 use App\Models\TeamMember;
-use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 
 class TeamMemberController extends Controller
 {
     public function index()
     {
-        $teamMembers = TeamMember::orderBy('sort_order')->get();
-        \Log::info('Team members loaded:', $teamMembers->pluck('id', 'name')->toArray());
+        $teamMembers = TeamMember::with('user')->orderBy('sort_order')->get();
+
         return view('admin.team.index', compact('teamMembers'));
     }
 
@@ -20,24 +27,13 @@ class TeamMemberController extends Controller
         return view('admin.team.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreTeamMemberRequest $request)
     {
-        $validated = $request->validate([
-            'name'         => 'required|string|max:255',
-            'role'         => 'required|string|max:255',
-            'email'        => 'required|email|max:255|unique:team_members,email',
-            'phone'        => 'required|string|max:20',
-            'bio'          => 'nullable|string',
-            'photo'        => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
-            'sort_order'   => 'nullable|integer',
-            'social_links' => 'nullable|array',
-            'social_links.*.platform' => 'nullable|string|max:50',
-            'social_links.*.username' => 'nullable|string|max:255',
-        ]);
+        $validated = $request->validated();
+        $createAccount = $request->boolean('create_property_account');
+        unset($validated['create_property_account']);
 
         $teamMember = new TeamMember($validated);
-
-        // Save socials as array (JSON in DB if casted)
         $teamMember->social_links = $request->input('social_links', []);
 
         if ($request->hasFile('photo')) {
@@ -47,33 +43,38 @@ class TeamMemberController extends Controller
 
         $teamMember->save();
 
-        return redirect()->route('admin.team.index')->with('success', 'Team member created successfully!');
+        $accountCreated = false;
+        if ($createAccount) {
+            $accountCreated = $this->provisionRealtorLinkedUser($teamMember);
+        }
+
+        $message = 'Team member created successfully.';
+        if ($accountCreated) {
+            $message .= ' A realtor login was created and a password-setup email was sent to '.$teamMember->email.'.';
+        }
+
+        return redirect()->route('admin.team.index')->with('success', $message);
     }
 
     public function show(TeamMember $team)
     {
+        $team->load('user');
+
         return view('admin.team.show', compact('team'));
     }
 
     public function edit(TeamMember $team)
     {
+        $team->load('user');
+
         return view('admin.team.edit', compact('team'));
     }
 
-    public function update(Request $request, TeamMember $team)
+    public function update(UpdateTeamMemberRequest $request, TeamMember $team)
     {
-        $validated = $request->validate([
-            'name'         => 'required|string|max:255',
-            'role'         => 'required|string|max:255',
-            'email'        => 'required|email|max:255|unique:team_members,email,' . $team->id,
-            'phone'        => 'required|string|max:20',
-            'bio'          => 'nullable|string',
-            'photo'        => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
-            'sort_order'   => 'nullable|integer',
-            'social_links' => 'nullable|array',
-            'social_links.*.platform' => 'nullable|string|max:50',
-            'social_links.*.username' => 'nullable|string|max:255',
-        ]);
+        $validated = $request->validated();
+        $createAccount = $request->boolean('create_property_account');
+        unset($validated['create_property_account']);
 
         $team->fill($validated);
         $team->social_links = $request->input('social_links', []);
@@ -85,60 +86,89 @@ class TeamMemberController extends Controller
 
         $team->save();
 
+        if ($team->user_id) {
+            $team->load('user');
+            $team->user->forceFill([
+                'name' => $team->name,
+                'email' => $team->email,
+                'phone' => $team->phone,
+                'bio' => $team->bio,
+                'avatar_path' => $team->photo,
+            ])->save();
+        }
+
+        $accountCreated = false;
+        if ($createAccount) {
+            $team->refresh();
+            $accountCreated = $this->provisionRealtorLinkedUser($team);
+        }
+
+        $message = 'Team member updated successfully.';
+        if ($accountCreated) {
+            $message .= ' A realtor login was created and a password-setup email was sent to '.$team->email.'.';
+        }
+
         return redirect()
             ->route('admin.team.index')
-            ->with('success', 'Team member updated successfully!');
+            ->with('success', $message);
     }
 
     public function destroy(TeamMember $team)
     {
         try {
-            // Debug: Log the team member details
-            \Log::info('Delete request received:', [
-                'team_id' => $team->id,
-                'team_name' => $team->name,
-                'team_email' => $team->email
-            ]);
-            
-            // Use the team member directly
-            $teamMember = $team;
-            
-            // Debug: Log the team member details
-            \Log::info('Team member found:', [
-                'id' => $teamMember->id,
-                'name' => $teamMember->name,
-                'email' => $teamMember->email
-            ]);
-            
-            // Get the team member name before deletion for the success message
-            $teamMemberName = $teamMember->name;
-            
-            // Delete the photo file if it exists
-            if ($teamMember->photo) {
-                $photoPath = storage_path('app/public/uploads/team/' . $teamMember->photo);
+            $teamMemberName = $team->name;
+            $hadUser = (bool) $team->user_id;
+
+            if ($team->photo) {
+                $photoPath = storage_path('app/public/uploads/team/'.$team->photo);
                 if (file_exists($photoPath)) {
                     unlink($photoPath);
-                    \Log::info('Photo file deleted: ' . $photoPath);
                 }
             }
-            
-            // Permanently delete the team member from database
-            $deleted = $teamMember->delete();
-            
-            \Log::info('Delete result:', ['deleted' => $deleted, 'team_member_id' => $teamMember->id]);
-            
-            return redirect()->route('admin.team.index')
-                ->with('success', "Team member '{$teamMemberName}' has been permanently deleted!");
-                
+
+            $team->delete();
+
+            $message = "Team member '{$teamMemberName}' has been permanently deleted.";
+            if ($hadUser) {
+                $message .= ' Their realtor login (user account) was not removed—manage users separately if needed.';
+            }
+
+            return redirect()->route('admin.team.index')->with('success', $message);
         } catch (\Exception $e) {
-            // Log the error for debugging
-            \Log::error('Error deleting team member: ' . $e->getMessage(), [
-                'team_member_id' => $teamMember->id ?? 'unknown',
-                'exception' => $e->getTraceAsString()
+            Log::error('Error deleting team member: '.$e->getMessage(), [
+                'team_member_id' => $team->id ?? 'unknown',
+                'exception' => $e->getTraceAsString(),
             ]);
-            
+
             return redirect()->route('admin.team.index')
                 ->with('error', 'Failed to delete team member. Please try again.');
         }
+    }
+
+    /**
+     * Create a realtor User, link to this team member, and email a password reset link.
+     */
+    protected function provisionRealtorLinkedUser(TeamMember $teamMember): bool
+    {
+        if ($teamMember->user_id) {
+            return false;
+        }
+
+        $user = User::create([
+            'name' => $teamMember->name,
+            'email' => $teamMember->email,
+            'password' => Hash::make(Str::password(32)),
+            'role' => UserRole::Realtor,
+            'phone' => $teamMember->phone,
+            'bio' => $teamMember->bio,
+            'avatar_path' => $teamMember->photo,
+        ]);
+
+        $teamMember->user_id = $user->id;
+        $teamMember->save();
+
+        Password::sendResetLink(['email' => $user->email]);
+
+        return true;
     }
 }

@@ -15,10 +15,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('properties/update-data/{property}', [App\Http\Controllers\Admin\PropertyController::class, 'updateData'])->name('properties.update-data');
     
     // Other admin routes will go here
-    Route::delete('properties/image/{id}', [App\Http\Controllers\Admin\PropertyController::class, 'deleteImage'])->name('properties.deleteImage');
+    Route::delete('properties/image/{image}', [App\Http\Controllers\Admin\PropertyController::class, 'deleteImage'])->name('properties.deleteImage');
     Route::resource('estates', App\Http\Controllers\Admin\EstateController::class);
     Route::delete('estates/image/{id}', [App\Http\Controllers\Admin\EstateController::class, 'deleteImage'])->name('estates.deleteImage');
     Route::resource('bookings', App\Http\Controllers\Admin\BookingController::class);
     Route::post('bookings/block-dates/{propertyId}', [App\Http\Controllers\Admin\BookingController::class, 'blockDates'])->name('bookings.blockDates');
     Route::resource('team', App\Http\Controllers\Admin\TeamMemberController::class);
+    Route::get('team-invite', [App\Http\Controllers\Admin\RealtorInviteController::class, 'create'])->name('team.invite.create');
+    Route::post('team-invite', [App\Http\Controllers\Admin\RealtorInviteController::class, 'store'])->name('team.invite.store');
 }); 

@@ -1,4 +1,12 @@
-@props(['property'])
+@props([
+    'property',
+    'editRoute' => null,
+    'destroyRoute' => null,
+])
+@php
+    $editRoute = $editRoute ?? route('admin.properties.edit', $property);
+    $destroyRoute = $destroyRoute ?? route('admin.properties.destroy', $property);
+@endphp
 
 <div class="admin-property-card">
     <div class="property-image">
@@ -61,6 +69,11 @@
             <span class="property-type">{{ ucfirst($property->property_type) }}</span>
             <span class="property-id">ID: {{ $property->id }}</span>
         </div>
+        @if($property->relationLoaded('realtor') && $property->realtor)
+            <div class="text-muted small mt-8">
+                <i class="flaticon-user"></i> Listing: {{ $property->realtor->publicBrandName() }}
+            </div>
+        @endif
     </div>
     
     <div class="property-actions">
@@ -70,12 +83,12 @@
                title="View Property">
                 <i class="flaticon-magnifiying-glass"></i>
             </a>
-            <a href="{{ route('admin.properties.edit', $property) }}" 
+            <a href="{{ $editRoute }}" 
                class="btn-action btn-edit" 
                title="Edit Property">
                 <i class="flaticon-edit"></i>
             </a>
-            <form action="{{ route('admin.properties.destroy', $property) }}" 
+            <form action="{{ $destroyRoute }}" 
                   method="POST" 
                   class="delete-form"
                   onsubmit="return confirmDelete('{{ $property->title }}')">

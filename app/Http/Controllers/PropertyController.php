@@ -94,7 +94,7 @@ class PropertyController extends Controller
 
     public function show($slug)
     {
-        $property = Property::where('slug', $slug)->with(['images', 'estate'])->firstOrFail();
+        $property = Property::where('slug', $slug)->with(['images', 'estate', 'realtor'])->firstOrFail();
         
         // Get similar properties (same property type, excluding current property, limit to 4)
         $similarProperties = Property::with('images')

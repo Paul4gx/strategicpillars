@@ -10,6 +10,23 @@
         <x-text-input2 title="Name" type="text" name="name" type-class="text" value="{{ old('name', $team->name) }}" required/>
         <x-text-input2 title="Role/Title" type="text" name="role" type-class="text" value="{{ old('role', $team->role) }}" required/>
         <x-text-input2 title="Email" type="email" name="email" type-class="text" value="{{ old('email', $team->email) }}" required/>
+
+        @if($team->user_id && $team->user)
+            <div class="alert alert-info py-10 px-15 mb-15">
+                <strong>Realtor login active.</strong> This person can sign in at the usual login page and use <a href="{{ url('/realtor') }}" target="_blank" rel="noopener">the realtor workspace</a> with {{ $team->user->email }}.
+            </div>
+        @else
+            <fieldset class="border rounded p-15 mb-15" style="border-color: #dee2e6;">
+                <label class="d-flex align-items-start gap10 cursor-pointer mb-0">
+                    <input type="checkbox" name="create_property_account" value="1" class="mt-5" @checked(old('create_property_account'))>
+                    <span>
+                        <strong>Create realtor login for this person</strong>
+                        <span class="d-block text-muted small mt-5">Adds a realtor account linked to this profile and emails them a link to set their password. Use this if they should upload and manage listings.</span>
+                    </span>
+                </label>
+            </fieldset>
+        @endif
+
         <x-text-input2 title="Phone" type="tel" name="phone" type-class="text" value="{{ old('phone', $team->phone) }}" required/>
         <x-textarea2 name="bio" title="Bio" value="{{ old('bio', $team->bio) }}" required/>
         <x-text-input2 title="Sort Order" type="number" name="sort_order" type-class="text" value="{{ old('sort_order', $team->sort_order) }}" required/>

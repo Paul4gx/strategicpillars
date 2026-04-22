@@ -8,7 +8,16 @@
  
                 <x-text-input2 title="Name" type="text" name="name" type-class="text" required/>
                 <x-text-input2 title="Role/Title" type="text" name="role" type-class="text" required/>
-                <x-text-input2 title="Email" type="email" name="email" type-class="text" required/>
+                <x-text-input2 title="Email" type="email" name="email" type-class="text" value="{{ old('email') }}" required/>
+                <fieldset class="border rounded p-15 mb-15" style="border-color: #dee2e6;">
+                    <label class="d-flex align-items-start gap10 cursor-pointer mb-0">
+                        <input type="checkbox" name="create_property_account" value="1" class="mt-5" @checked(old('create_property_account'))>
+                        <span>
+                            <strong>Create realtor login for this person</strong>
+                            <span class="d-block text-muted small mt-5">When checked, we create an account with permission to add and manage their own listings in the realtor portal. They receive an email to set a password, then complete their public profile (realty name, photo, etc.). Leave unchecked for website-only profiles (e.g. staff shown on the team page without listing access).</span>
+                        </span>
+                    </label>
+                </fieldset>
                 <x-text-input2 title="Phone" type="tel" name="phone" type-class="text" required/>
                 <x-textarea2 name="bio" title="Bio" required/>
                 <x-text-input2 title="Sort Order" type="number" name="sort_order" type-class="text" required/>

@@ -2,142 +2,63 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\OptimizesPropertyImages;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StorePropertyDataRequest;
+use App\Http\Requests\StorePropertyImageRequest;
+use App\Http\Requests\UpdatePropertyDataRequest;
 use App\Models\Property;
+use App\Models\PropertyImage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Gd\Driver;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PropertyController extends Controller
 {
-    /**
-     * Image manager instance
-     */
-    protected $imageManager;
+    use OptimizesPropertyImages;
 
-    public function __construct()
-    {
-        $this->imageManager = new ImageManager(new Driver());
-    }
-
-    /**
-     * Optimize and resize image
-     */
-    protected function optimizeImage($imageFile, $maxWidth = 1200, $maxHeight = 900, $quality = 85)
-    {
-        try {
-            // Increase memory limit temporarily for image processing
-            $originalMemoryLimit = ini_get('memory_limit');
-            ini_set('memory_limit', '512M');
-            
-            $image = $this->imageManager->read($imageFile);
-            
-            // Resize image while maintaining aspect ratio
-            $image->scaleDown($maxWidth, $maxHeight);
-            
-            // Optimize quality and encode to string
-            $result = $image->toJpeg($quality)->toString();
-            
-            // Restore original memory limit
-            ini_set('memory_limit', $originalMemoryLimit);
-            
-            return $result;
-        } catch (\Exception $e) {
-            // Restore original memory limit in case of error
-            ini_set('memory_limit', $originalMemoryLimit ?? '128M');
-            throw $e;
-        }
-    }
-
-    /**
-     * Create thumbnail
-     */
-    protected function createThumbnail($imageFile, $width = 300, $height = 300, $quality = 80)
-    {
-        try {
-            // Increase memory limit temporarily for image processing
-            $originalMemoryLimit = ini_get('memory_limit');
-            ini_set('memory_limit', '512M');
-            
-            $image = $this->imageManager->read($imageFile);
-            
-            // Resize and crop to exact dimensions for thumbnail
-            $image->cover($width, $height);
-            
-            // Optimize quality and encode to string
-            $result = $image->toJpeg($quality)->toString();
-            
-            // Restore original memory limit
-            ini_set('memory_limit', $originalMemoryLimit);
-            
-            return $result;
-        } catch (\Exception $e) {
-            // Restore original memory limit in case of error
-            ini_set('memory_limit', $originalMemoryLimit ?? '128M');
-            throw $e;
-        }
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $properties = \App\Models\Property::with('images')->latest()->paginate(10);
+        $this->authorize('viewAny', Property::class);
+
+        $properties = Property::with(['images', 'realtor'])->latest()->paginate(10);
+
         return view('admin.properties.index', compact('properties'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
+        $this->authorize('create', Property::class);
+
         $estates = \App\Models\Estate::all();
-        return view('admin.properties.create', compact('estates'));
+        $realtorAssignees = \App\Models\User::query()
+            ->where('role', \App\Enums\UserRole::Realtor)
+            ->orderBy('name')
+            ->get();
+
+        $propertyApi = [
+            'storeData' => route('admin.properties.store-data'),
+            'storeImagesBase' => url('/admin/properties/store-images'),
+            'index' => route('admin.properties.index'),
+            'formAction' => route('admin.properties.store'),
+        ];
+
+        return view('admin.properties.create', compact('estates', 'realtorAssignees', 'propertyApi'));
     }
 
-    /**
-     * Store property data only (Step 1 of two-step process)
-     */
-    public function storeData(Request $request)
+    public function storeData(StorePropertyDataRequest $request)
     {
         try {
-            $validated = $request->validate([
-                'title' => 'required|string|max:255',
-                'short_description' => 'nullable|string|max:255',
-                'long_description' => 'nullable|string',
-                'status' => 'required|in:available,sold,rented,off-plan,upcoming',
-                'price' => 'required|numeric',
-                'currency' => 'required|in:NGN,USD',
-                'discount_price' => 'nullable|numeric',
-                'property_type' => 'required|string|in:' . implode(',', array_keys(config('property_types.flat_list'))),
-                'bedrooms' => 'nullable|integer',
-                'bathrooms' => 'nullable|integer',
-                'parking_spaces' => 'nullable|integer',
-                'address' => 'nullable|string|max:255',
-                'city' => 'nullable|string|max:255',
-                'state' => 'nullable|string|max:255',
-                'estate_id' => 'nullable|exists:estates,id',
-                'featured' => 'nullable|boolean',
-                'video_link' => 'nullable|string|max:255',
-                'brochure' => 'nullable|file|mimes:pdf',
-                'seo_title' => 'nullable|string|max:255',
-                'seo_description' => 'nullable|string|max:255',
-                'year_built' => 'nullable|integer|min:1900|max:2030',
-                'area' => 'nullable|integer|min:1',
-                'property_features' => 'nullable|array',
-                'property_features.*' => 'string|max:255',
-                'building_type' => 'nullable|in:office,home,complex,others',
-            ]);
+            $validated = $request->validated();
+            $listingUserId = $this->resolveListingUserId($request, $validated);
+            unset($validated['listing_user_id']);
 
-            $property = new \App\Models\Property($validated);
-            $property->slug = Str::slug($request->title) . '-' . uniqid();
+            $property = new Property($validated);
+            $property->user_id = $listingUserId;
+            $property->slug = Str::slug($request->title).'-'.uniqid();
             $property->featured = $request->has('featured');
 
-            // Handle brochure upload
             if ($request->hasFile('brochure')) {
                 $brochurePath = $request->file('brochure')->store('uploads/brochures', 'public');
                 $property->brochure = basename($brochurePath);
@@ -148,108 +69,65 @@ class PropertyController extends Controller
             return response()->json([
                 'success' => true,
                 'property_id' => $property->id,
-                'message' => 'Property data saved successfully!'
+                'message' => 'Property data saved successfully!',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Property data creation error: '.$e->getMessage(), [
+                'request_data' => $request->except(['brochure']),
+                'error' => $e->getTraceAsString(),
             ]);
 
-        } catch (\Exception $e) {
-            Log::error('Property data creation error: ' . $e->getMessage(), [
-                'request_data' => $request->except(['brochure']),
-                'error' => $e->getTraceAsString()
-            ]);
-            
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to save property data: ' . $e->getMessage()
+                'message' => 'Failed to save property data: '.$e->getMessage(),
             ], 500);
         }
     }
 
-    /**
-     * Store images for existing property (Step 2 of two-step process)
-     */
-    public function storeImages(Request $request, $propertyId)
+    public function storeImages(StorePropertyImageRequest $request, Property $property)
     {
         try {
-            $property = \App\Models\Property::findOrFail($propertyId);
-            
-            $request->validate([
-                'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240' // 10MB max - matches existing system
-            ]);
-
             $image = $request->file('image');
-            $filename = uniqid() . '_' . time() . '.jpg';
-            
-            // Optimize image with same settings as existing system
+            $filename = uniqid().'_'.time().'.jpg';
+
             $optimizedImage = $this->optimizeImage($image, 1200, 900, 85);
-            $mainImagePath = 'uploads/properties/' . $filename;
-            Storage::disk('public')->put($mainImagePath, $optimizedImage);
-            
-            // Create thumbnail with same settings as existing system
+            Storage::disk('public')->put('uploads/properties/'.$filename, $optimizedImage);
+
             $thumbnailImage = $this->createThumbnail($image, 300, 300, 80);
-            $thumbnailPath = 'uploads/properties/thumbnails/' . $filename;
-            Storage::disk('public')->put($thumbnailPath, $thumbnailImage);
-            
+            Storage::disk('public')->put('uploads/properties/thumbnails/'.$filename, $thumbnailImage);
+
             $property->images()->create(['image_path' => $filename]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Image uploaded successfully',
-                'filename' => $filename
+                'filename' => $filename,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Image upload error: '.$e->getMessage(), [
+                'property_id' => $property->id,
+                'error' => $e->getTraceAsString(),
             ]);
 
-        } catch (\Exception $e) {
-            Log::error('Image upload error: ' . $e->getMessage(), [
-                'property_id' => $propertyId,
-                'error' => $e->getTraceAsString()
-            ]);
-            
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to upload image: ' . $e->getMessage()
+                'message' => 'Failed to upload image: '.$e->getMessage(),
             ], 500);
         }
     }
 
-    /**
-     * Store a newly created resource in storage (Legacy method - kept for compatibility)
-     */
-    public function store(Request $request)
+    public function store(StorePropertyDataRequest $request)
     {
         try {
-            $validated = $request->validate([
-                'title' => 'required|string|max:255',
-                'short_description' => 'nullable|string|max:255',
-                'long_description' => 'nullable|string',
-                'status' => 'required|in:available,sold,rented,off-plan,upcoming',
-                'price' => 'required|numeric',
-                'currency' => 'required|in:NGN,USD',
-                'discount_price' => 'nullable|numeric',
-                'property_type' => 'required|string|in:' . implode(',', array_keys(config('property_types.flat_list'))),
-                'bedrooms' => 'nullable|integer',
-                'bathrooms' => 'nullable|integer',
-                'parking_spaces' => 'nullable|integer',
-                'address' => 'nullable|string|max:255',
-                'city' => 'nullable|string|max:255',
-                'state' => 'nullable|string|max:255',
-                'estate_id' => 'nullable|exists:estates,id',
-                'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
-                'featured' => 'nullable|boolean',
-                'video_link' => 'nullable|string|max:255',
-                'brochure' => 'nullable|file|mimes:pdf',
-                'seo_title' => 'nullable|string|max:255',
-                'seo_description' => 'nullable|string|max:255',
-                'year_built' => 'nullable|integer|min:1900|max:2030',
-                'area' => 'nullable|integer|min:1',
-                'property_features' => 'nullable|array',
-                'property_features.*' => 'string|max:255',
-                'building_type' => 'nullable|in:office,home,complex,others',
-            ]);
+            $validated = $request->validated();
+            $listingUserId = $this->resolveListingUserId($request, $validated);
+            unset($validated['listing_user_id']);
 
-            $property = new \App\Models\Property($validated);
-            $property->slug = Str::slug($request->title) . '-' . uniqid();
+            $property = new Property($validated);
+            $property->user_id = $listingUserId;
+            $property->slug = Str::slug($request->title).'-'.uniqid();
             $property->featured = $request->has('featured');
 
-            // Handle brochure upload
             if ($request->hasFile('brochure')) {
                 $brochurePath = $request->file('brochure')->store('uploads/brochures', 'public');
                 $property->brochure = basename($brochurePath);
@@ -257,116 +135,80 @@ class PropertyController extends Controller
 
             $property->save();
 
-            // Handle images upload with optimization - wrapped in try-catch for better error handling
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
                     try {
-                        // Generate unique filename
-                        $filename = uniqid() . '_' . time() . '.jpg';
-                        
-                        // Optimize main image with error handling
+                        $filename = uniqid().'_'.time().'.jpg';
                         $optimizedImage = $this->optimizeImage($image, 1200, 900, 85);
-                        $mainImagePath = 'uploads/properties/' . $filename;
-                        Storage::disk('public')->put($mainImagePath, $optimizedImage);
-                        
-                        // Create thumbnail with error handling
+                        Storage::disk('public')->put('uploads/properties/'.$filename, $optimizedImage);
                         $thumbnailImage = $this->createThumbnail($image, 300, 300, 80);
-                        $thumbnailPath = 'uploads/properties/thumbnails/' . $filename;
-                        Storage::disk('public')->put($thumbnailPath, $thumbnailImage);
-                        
-                        $property->images()->create([
-                            'image_path' => $filename
-                        ]);
+                        Storage::disk('public')->put('uploads/properties/thumbnails/'.$filename, $thumbnailImage);
+                        $property->images()->create(['image_path' => $filename]);
                     } catch (\Exception $imageError) {
-                        Log::error('Image processing error: ' . $imageError->getMessage(), [
+                        Log::error('Image processing error: '.$imageError->getMessage(), [
                             'property_id' => $property->id,
-                            'filename' => $image->getClientOriginalName(),
-                            'error' => $imageError->getTraceAsString()
+                            'error' => $imageError->getTraceAsString(),
                         ]);
-                        
-                        // Continue with other images even if one fails
                         continue;
                     }
                 }
             }
 
             return redirect()->route('admin.properties.index')->with('success', 'Property created successfully!');
-            
         } catch (\Exception $e) {
-            Log::error('Property creation error: ' . $e->getMessage(), [
+            Log::error('Property creation error: '.$e->getMessage(), [
                 'request_data' => $request->except(['images', 'brochure']),
-                'error' => $e->getTraceAsString()
+                'error' => $e->getTraceAsString(),
             ]);
-            
+
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Failed to create property. Please check your input and try again.');
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Property $property)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
+    public function edit(Property $property)
     {
-        $property = \App\Models\Property::with('images')->findOrFail($id);
+        $this->authorize('update', $property);
+
+        $property->load('images');
         $estates = \App\Models\Estate::all();
-        return view('admin.properties.edit', compact('property', 'estates'));
+        $realtorAssignees = \App\Models\User::query()
+            ->where('role', \App\Enums\UserRole::Realtor)
+            ->orderBy('name')
+            ->get();
+
+        $propertyApi = [
+            'updateData' => route('admin.properties.update-data', $property),
+            'storeImagesBase' => url('/admin/properties/store-images'),
+            'deleteImageBase' => url('/admin/properties/image'),
+            'index' => route('admin.properties.index'),
+            'formAction' => route('admin.properties.update', $property),
+        ];
+
+        return view('admin.properties.edit', compact('property', 'estates', 'realtorAssignees', 'propertyApi'));
     }
 
-    /**
-     * Update property data only (Step 1 of two-step edit process)
-     */
-    public function updateData(Request $request, $id)
+    public function updateData(UpdatePropertyDataRequest $request, Property $property)
     {
         try {
-            $property = \App\Models\Property::findOrFail($id);
-            
-            $validated = $request->validate([
-                'title' => 'required|string|max:255',
-                'short_description' => 'nullable|string|max:255',
-                'long_description' => 'nullable|string',
-                'status' => 'required|in:available,sold,rented,off-plan,upcoming',
-                'price' => 'required|numeric',
-                'currency' => 'required|in:NGN,USD',
-                'discount_price' => 'nullable|numeric',
-                'property_type' => 'required|string|in:' . implode(',', array_keys(config('property_types.flat_list'))),
-                'bedrooms' => 'nullable|integer',
-                'bathrooms' => 'nullable|integer',
-                'parking_spaces' => 'nullable|integer',
-                'address' => 'nullable|string|max:255',
-                'city' => 'nullable|string|max:255',
-                'state' => 'nullable|string|max:255',
-                'estate_id' => 'nullable|exists:estates,id',
-                'featured' => 'nullable|boolean',
-                'video_link' => 'nullable|string|max:255',
-                'brochure' => 'nullable|file|mimes:pdf',
-                'seo_title' => 'nullable|string|max:255',
-                'seo_description' => 'nullable|string|max:255',
-                'year_built' => 'nullable|integer|min:1900|max:2030',
-                'area' => 'nullable|integer|min:1',
-                'property_features' => 'nullable|array',
-                'property_features.*' => 'string|max:255',
-                'building_type' => 'nullable|in:office,home,complex,others',
-            ]);
+            $validated = $request->validated();
+            if ($request->user()->isAdmin() && array_key_exists('listing_user_id', $validated)) {
+                $property->user_id = $validated['listing_user_id'];
+            }
+            unset($validated['listing_user_id']);
 
-            // Update property data
             $property->fill($validated);
             $property->featured = $request->has('featured');
 
-            // Handle brochure upload
             if ($request->hasFile('brochure')) {
-                // Delete old brochure if exists
                 if ($property->brochure) {
-                    Storage::disk('public')->delete('uploads/brochures/' . $property->brochure);
+                    Storage::disk('public')->delete('uploads/brochures/'.$property->brochure);
                 }
                 $brochurePath = $request->file('brochure')->store('uploads/brochures', 'public');
                 $property->brochure = basename($brochurePath);
@@ -377,62 +219,33 @@ class PropertyController extends Controller
             return response()->json([
                 'success' => true,
                 'property_id' => $property->id,
-                'message' => 'Property data updated successfully!'
+                'message' => 'Property data updated successfully!',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Property data update error: '.$e->getMessage(), [
+                'property_id' => $property->id,
+                'request_data' => $request->except(['brochure']),
+                'error' => $e->getTraceAsString(),
             ]);
 
-        } catch (\Exception $e) {
-            Log::error('Property data update error: ' . $e->getMessage(), [
-                'property_id' => $id,
-                'request_data' => $request->except(['brochure']),
-                'error' => $e->getTraceAsString()
-            ]);
-            
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update property data: ' . $e->getMessage()
+                'message' => 'Failed to update property data: '.$e->getMessage(),
             ], 500);
         }
     }
 
-    /**
-     * Update the specified resource in storage (Legacy method - kept for compatibility)
-     */
-    public function update(Request $request, $id)
+    public function update(UpdatePropertyDataRequest $request, Property $property)
     {
-        $property = \App\Models\Property::with('images')->findOrFail($id);
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'short_description' => 'nullable|string|max:255',
-            'long_description' => 'nullable|string',
-            'status' => 'required|in:available,sold,rented,off-plan,upcoming',
-            'price' => 'required|numeric',
-            'currency' => 'required|in:NGN,USD',
-            'discount_price' => 'nullable|numeric',
-            'property_type' => 'required|string|in:' . implode(',', array_keys(config('property_types.flat_list'))),
-            'bedrooms' => 'nullable|integer',
-            'bathrooms' => 'nullable|integer',
-            'parking_spaces' => 'nullable|integer',
-            'address' => 'nullable|string|max:255',
-            'city' => 'nullable|string|max:255',
-            'state' => 'nullable|string|max:255',
-            'estate_id' => 'nullable|exists:estates,id',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
-            'featured' => 'nullable|boolean',
-            'video_link' => 'nullable|string|max:255',
-            'brochure' => 'nullable|file|mimes:pdf',
-            'seo_title' => 'nullable|string|max:255',
-            'seo_description' => 'nullable|string|max:255',
-            'year_built' => 'nullable|integer|min:1900|max:2030',
-            'area' => 'nullable|integer|min:1',
-            'property_features' => 'nullable|array',
-            'property_features.*' => 'string|max:255',
-            'building_type' => 'nullable|in:office,home,complex,others',
-        ]);
+        $validated = $request->validated();
+        if ($request->user()->isAdmin() && array_key_exists('listing_user_id', $validated)) {
+            $property->user_id = $validated['listing_user_id'];
+        }
+        unset($validated['listing_user_id']);
 
         $property->fill($validated);
         $property->featured = $request->has('featured');
 
-        // Handle brochure replacement
         if ($request->hasFile('brochure')) {
             $brochurePath = $request->file('brochure')->store('uploads/brochures', 'public');
             $property->brochure = basename($brochurePath);
@@ -440,79 +253,75 @@ class PropertyController extends Controller
 
         $property->save();
 
-        // Handle new images upload with optimization
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                // Generate unique filename
-                $filename = uniqid() . '_' . time() . '.jpg';
-                
-                // Optimize main image
+                $filename = uniqid().'_'.time().'.jpg';
                 $optimizedImage = $this->optimizeImage($image, 1200, 900, 85);
-                $mainImagePath = 'uploads/properties/' . $filename;
-                Storage::disk('public')->put($mainImagePath, $optimizedImage);
-                
-                // Create thumbnail
+                Storage::disk('public')->put('uploads/properties/'.$filename, $optimizedImage);
                 $thumbnailImage = $this->createThumbnail($image, 300, 300, 80);
-                $thumbnailPath = 'uploads/properties/thumbnails/' . $filename;
-                Storage::disk('public')->put($thumbnailPath, $thumbnailImage);
-                
-                $property->images()->create([
-                    'image_path' => $filename
-                ]);
+                Storage::disk('public')->put('uploads/properties/thumbnails/'.$filename, $thumbnailImage);
+                $property->images()->create(['image_path' => $filename]);
             }
         }
 
         return redirect()->route('admin.properties.edit', $property)->with('success', 'Property updated successfully!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Property $property)
     {
+        $this->authorize('delete', $property);
+
         try {
-            // Delete all associated images and their files
-            foreach ($property->images as $image) {
-                // Delete the main image and thumbnail from storage
-                Storage::disk('public')->delete('uploads/properties/' . $image->image_path);
-                Storage::disk('public')->delete('uploads/properties/thumbnails/' . $image->image_path);
-                
-                // Delete the image record
-                $image->delete();
+            foreach ($property->images as $propertyImage) {
+                Storage::disk('public')->delete('uploads/properties/'.$propertyImage->image_path);
+                Storage::disk('public')->delete('uploads/properties/thumbnails/'.$propertyImage->image_path);
+                $propertyImage->delete();
             }
-            
-            // Delete brochure if it exists
+
             if ($property->brochure) {
-                Storage::disk('public')->delete('uploads/brochures/' . $property->brochure);
+                Storage::disk('public')->delete('uploads/brochures/'.$property->brochure);
             }
-            
-            // Delete the property
+
             $property->delete();
-            
+
             return redirect()->route('admin.properties.index')
                 ->with('success', 'Property deleted successfully!');
-                
         } catch (\Exception $e) {
-            Log::error('Property deletion error: ' . $e->getMessage(), [
+            Log::error('Property deletion error: '.$e->getMessage(), [
                 'property_id' => $property->id,
-                'error' => $e->getTraceAsString()
+                'error' => $e->getTraceAsString(),
             ]);
-            
+
             return redirect()->back()
                 ->with('error', 'Failed to delete property. Please try again.');
         }
     }
 
-    public function deleteImage($id)
+    public function deleteImage(PropertyImage $image)
     {
-        $image = \App\Models\PropertyImage::findOrFail($id);
         $property = $image->property;
-        
-        // Delete the main image and thumbnail from storage
-        Storage::disk('public')->delete('uploads/properties/' . $image->image_path);
-        Storage::disk('public')->delete('uploads/properties/thumbnails/' . $image->image_path);
-        
+        $this->authorize('deleteImage', $property);
+
+        Storage::disk('public')->delete('uploads/properties/'.$image->image_path);
+        Storage::disk('public')->delete('uploads/properties/thumbnails/'.$image->image_path);
         $image->delete();
+
         return redirect()->route('admin.properties.edit', $property)->with('success', 'Image deleted successfully!');
+    }
+
+    /**
+     * @param  array<string, mixed>  $validated
+     */
+    protected function resolveListingUserId(Request $request, array $validated): ?int
+    {
+        if ($request->user()->isAdmin()) {
+            if (! empty($validated['listing_user_id'])) {
+                return (int) $validated['listing_user_id'];
+            }
+
+            return $request->user()->isRealtor() ? $request->user()->id : null;
+        }
+
+        return $request->user()->id;
     }
 }

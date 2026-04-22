@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -12,37 +14,93 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role',
+        'realty_display_name',
+        'phone',
+        'bio',
+        'avatar_path',
+        'onboarding_completed_at',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => UserRole::class,
+            'onboarding_completed_at' => 'datetime',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (User $user) {
+            $user->is_admin = $user->role === UserRole::Admin;
+        });
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === UserRole::Admin;
+    }
+
+    public function isRealtor(): bool
+    {
+        return $this->role === UserRole::Realtor;
+    }
+
+    public function isClient(): bool
+    {
+        return $this->role === UserRole::Client;
+    }
+
+    public function publicBrandName(): string
+    {
+        return $this->realty_display_name ?: $this->name;
+    }
+
+    public function properties(): HasMany
+    {
+        return $this->hasMany(Property::class);
+    }
+
+    public function teamMemberProfile(): HasOne
+    {
+        return $this->hasOne(TeamMember::class);
+    }
+
+    public function avatarUrl(): ?string
+    {
+        if (! $this->avatar_path) {
+            return null;
+        }
+
+        return asset('storage/uploads/team/'.$this->avatar_path);
+    }
+
+    public function intendedDashboardUrl(): string
+    {
+        if ($this->isAdmin()) {
+            return route('admin.dashboard');
+        }
+
+        if ($this->isRealtor()) {
+            if (! $this->onboarding_completed_at) {
+                return route('realtor.onboarding.edit');
+            }
+
+            return route('realtor.dashboard');
+        }
+
+        return route('dashboard');
     }
 }

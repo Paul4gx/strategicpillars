@@ -8,6 +8,13 @@
             <h4>{{ $team->name }}</h4>
             <p><strong>Role:</strong> {{ $team->role }}</p>
             <p><strong>Email:</strong> {{ $team->email }}</p>
+            <p><strong>Realtor listing access:</strong>
+                @if($team->user_id && $team->user)
+                    Yes — linked login ({{ $team->user->email }})
+                @else
+                    No — website profile only
+                @endif
+            </p>
             <p><strong>Phone:</strong> {{ $team->phone }}</p>
             <p><strong>Bio:</strong> {{ $team->bio }}</p>
             <p><strong>Sort Order:</strong> {{ $team->sort_order }}</p>

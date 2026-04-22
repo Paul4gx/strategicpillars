@@ -3,7 +3,10 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center">
         <h3>Team Members</h3>
-        <a href="{{ route('admin.team.create') }}" class="tf-button-default"> <i class="flaticon-plus"></i> Add Member</a>
+        <div class="flex gap10 flex-wrap">
+            <a href="{{ route('admin.team.invite.create') }}" class="tf-button-primary"><i class="flaticon-user"></i> Invite realtor</a>
+            <a href="{{ route('admin.team.create') }}" class="tf-button-default"><i class="flaticon-plus"></i> Add member</a>
+        </div>
     </div>
     <div class="text-content">Review Team</div>
     @if(session('success'))
@@ -19,12 +22,21 @@
                                     <div class="wg-box agents-item wow fadeInUp">
                                         <div class="flex gap40">
                                             <div class="image">
-                                                <img src="{{ asset('storage/uploads/team/'.$member->photo) }}" alt="">
+                                                @if($member->photo)
+                                                    <img src="{{ asset('storage/uploads/team/'.$member->photo) }}" alt="">
+                                                @else
+                                                    <div class="d-flex align-items-center justify-content-center bg-light text-muted" style="width:120px;height:120px;border-radius:8px;">No photo</div>
+                                                @endif
                                             </div>
                                             <div>
                                                 <div class="infor">
                                                     <div class="name" style="padding-bottom:0px">
                                                         <a href="{{ route('admin.team.show', $member) }}">{{ $member->name }} <span>({{ $member->role }})</span></a>
+                                                        @if($member->user_id)
+                                                            <span class="badge bg-success ms-8" title="Can log in and manage listings">Listings login</span>
+                                                        @else
+                                                            <span class="badge bg-secondary ms-8" title="Website profile only">Profile only</span>
+                                                        @endif
                                                     </div>
                                                     <p>{{ $member->bio }}</p>
                                                 </div>

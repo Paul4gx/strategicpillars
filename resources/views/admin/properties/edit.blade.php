@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends($layout ?? 'admin.layouts.app')
 
 @section('title', 'Edit Property')
 @push('styles')
@@ -114,6 +114,49 @@
     color: white;
     font-size: 12px;
     font-weight: bold;
+}
+
+.property-form-optional {
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    margin-bottom: 1.25rem;
+    background: #fafafa;
+}
+.property-form-optional-toggle {
+    width: 100%;
+    text-align: left;
+    padding: 14px 18px;
+    background: #f1f3f5;
+    border: none;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    border-radius: 10px;
+}
+.property-form-optional-toggle:hover { background: #e9ecef; }
+.property-form-optional-toggle .hint {
+    font-weight: 400;
+    font-size: 13px;
+    color: #666;
+}
+.property-form-optional-body {
+    padding: 18px;
+    border-top: 1px solid #e0e0e0;
+    background: #fff;
+    border-radius: 0 0 10px 10px;
+}
+.property-form-optional-toggle .toggle-chevron {
+    transition: transform 0.2s ease;
+    display: inline-block;
+    font-size: 12px;
+    color: #666;
+}
+.property-form-optional-toggle[aria-expanded="true"] .toggle-chevron {
+    transform: rotate(-180deg);
 }
 
 /* ========================================
@@ -607,17 +650,50 @@
 </style>
 @endpush
 @section('content')
+@php
+    $propertyApi = $propertyApi ?? [
+        'updateData' => route('admin.properties.update-data', $property),
+        'storeImagesBase' => url('/admin/properties/store-images'),
+        'deleteImageBase' => url('/admin/properties/image'),
+        'index' => route('admin.properties.index'),
+        'formAction' => route('admin.properties.update', $property),
+    ];
+    $expandOptionalAmenitiesEdit = ! empty($property->property_features) || ! empty(old('property_features'));
+    $expandOptionalMediaEdit = filled($property->video_link) || filled($property->brochure) || filled(old('video_link'));
+    $expandOptionalExtrasEdit = ($property->parking_spaces !== null && $property->parking_spaces !== '')
+        || ($property->year_built !== null && $property->year_built !== '')
+        || ($property->area !== null && $property->area !== '')
+        || (old('parking_spaces') !== null && old('parking_spaces') !== '')
+        || (old('year_built') !== null && old('year_built') !== '')
+        || (old('area') !== null && old('area') !== '');
+@endphp
  <div class="wg-box pl-44 mb-20">
 <h3>Edit Property</h3>
 <form id="property-form" 
-      action="{{ route('admin.properties.update', $property) }}" 
+      action="{{ $propertyApi['formAction'] }}" 
       method="POST" 
       enctype="multipart/form-data" 
       class="form-bacsic-infomation flex gap30 flex-column">
    @csrf
    @method('PUT')
     <x-text-input2 title="Title" name="title" :value="old('title', $property->title)" required />
+    @if(!empty($realtorAssignees) && auth()->user()->isAdmin())
+    <fieldset class="text has-top-title mb-15">
+        <label class="d-block mb-8 fw-semibold">Listing realtor (optional)</label>
+        <select name="listing_user_id" class="form-select">
+            <option value="">— Company / unassigned —</option>
+            @foreach($realtorAssignees as $realtorUser)
+                <option value="{{ $realtorUser->id }}" @selected(old('listing_user_id', $property->user_id) == $realtorUser->id)>
+                    {{ $realtorUser->name }} @if($realtorUser->realty_display_name) ({{ $realtorUser->realty_display_name }}) @endif
+                </option>
+            @endforeach
+        </select>
+        <small class="text-muted d-block mt-6">Controls which realtor profile appears on the public listing.</small>
+        @error('listing_user_id')<div class="text-danger">{{ $message }}</div>@enderror
+    </fieldset>
+    @endif
     <x-text-input2 title="Short Description" name="short_description" :value="old('short_description', $property->short_description)" />
+    <p class="text-muted small mt-8 mb-0">Title and short description are used for search results and previews—no separate SEO fields.</p>
     <fieldset class="text has-top-title">
         <label>Long Description</label>
         <textarea name="long_description" id="long_description" class="form-control summernote">{{ old('long_description', $property->long_description) }}</textarea>
@@ -649,8 +725,7 @@
             @error('currency')<div class="text-danger">{{ $message }}</div>@enderror
         </fieldset>
     </div>
-    <x-text-input2 title="Discount Price (optional)" name="discount_price" type="number" :value="old('discount_price', $property->discount_price)" />
-    
+
     <fieldset class="mb-15">
         <select name="property_type" class="form-select nice-select" required>
             <option value="">Select Property Type</option>
@@ -672,24 +747,15 @@
         @error('property_type')<div class="text-danger">{{ $message }}</div>@enderror
     </fieldset>
     <div class="row mb-3">
-        <fieldset class="col-md-4 mb-15">
+        <fieldset class="col-md-6 mb-15">
             <x-text-input2 title="Bedrooms" name="bedrooms" type="number" :value="old('bedrooms', $property->bedrooms)" />
         </fieldset>
-        <fieldset class="col-md-4 mb-15">
+        <fieldset class="col-md-6 mb-15">
             <x-text-input2 title="Bathrooms" name="bathrooms" type="number" :value="old('bathrooms', $property->bathrooms)" />
-        </fieldset>
-        <fieldset class="col-md-4">
-            <x-text-input2 title="Parking Spaces" name="parking_spaces" type="number" :value="old('parking_spaces', $property->parking_spaces)" />
         </fieldset>
     </div>
     <div class="row mb-3">
-        <fieldset class="col-md-3 mb-15">
-            <x-text-input2 title="Year Built" name="year_built" type="number" :value="old('year_built', $property->year_built)" min="1900" max="2030" />
-        </fieldset>
-        <fieldset class="col-md-3 mb-15">
-            <x-text-input2 title="Area (sq ft)" name="area" type="number" :value="old('area', $property->area)" min="1" />
-        </fieldset>
-        <fieldset class="col-md-6">
+        <fieldset class="col-md-12">
             <select name="building_type" class="" tabindex="2" aria-required="true">
                 <option value="">Select Building Type</option>
                 <option value="office" @if(old('building_type', $property->building_type) == 'office') selected @endif>Office</option>
@@ -721,8 +787,34 @@
         </select>
         
     </fieldset>
-    
-    {{-- Property Features/Amenities Section --}}
+
+    <div class="property-form-optional">
+        <button class="property-form-optional-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#optional-extras-edit" aria-expanded="{{ $expandOptionalExtrasEdit ? 'true' : 'false' }}" aria-controls="optional-extras-edit">
+            <span>Parking, year built &amp; floor area <span class="hint">optional — expand when you have these details</span></span>
+            <span class="toggle-chevron" aria-hidden="true">▼</span>
+        </button>
+        <div id="optional-extras-edit" class="collapse property-form-optional-body {{ $expandOptionalExtrasEdit ? 'show' : '' }}">
+            <div class="row mb-3">
+                <fieldset class="col-md-4 mb-15">
+                    <x-text-input2 title="Parking Spaces" name="parking_spaces" type="number" :value="old('parking_spaces', $property->parking_spaces)" />
+                </fieldset>
+                <fieldset class="col-md-4 mb-15">
+                    <x-text-input2 title="Year Built" name="year_built" type="number" :value="old('year_built', $property->year_built)" min="1900" max="2030" />
+                </fieldset>
+                <fieldset class="col-md-4 mb-15">
+                    <x-text-input2 title="Area (sq ft)" name="area" type="number" :value="old('area', $property->area)" min="1" />
+                </fieldset>
+            </div>
+        </div>
+    </div>
+
+    <div class="property-form-optional">
+        <button class="property-form-optional-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#optional-amenities-edit" aria-expanded="{{ $expandOptionalAmenitiesEdit ? 'true' : 'false' }}" aria-controls="optional-amenities-edit">
+            <span>Property features &amp; amenities <span class="hint">optional — expand to add or change amenities</span></span>
+            <span class="toggle-chevron" aria-hidden="true">▼</span>
+        </button>
+        <div id="optional-amenities-edit" class="collapse property-form-optional-body {{ $expandOptionalAmenitiesEdit ? 'show' : '' }}">
+            <p class="text-muted small mb-15">Leave collapsed for minimal listings. This panel opens automatically if amenities are already saved.</p>
     <div class="form-group w-100">
         <h5 class="mb-5">Property Features & Amenities</h5>
         @php
@@ -874,26 +966,35 @@
         @endforeach
     </div>
     @error('property_features')<div class="text-danger">{{ $message }}</div>@enderror
-    
+        </div>
+    </div>
+
     <fieldset class="text has-top-title">
         <label for="featuredbox" style="font-size: 1.5rem;cursor: pointer">Show on homepage: </label>
         <input type="checkbox" name="featured" id="featuredbox" value="1" @if(old('featured', $property->featured)) checked @endif> 
     </fieldset>
-    <x-text-input2 title="Video Link (YouTube/Vimeo)" name="video_link" :value="old('video_link', $property->video_link)" />
-    <div class="form-group mb-3">
-        <label>Current Brochure</label>
-        @if($property->brochure)
-            <a href="{{ asset('uploads/brochures/' . $property->brochure) }}" target="_blank">Download Brochure</a>
-        @else
-            <span>No brochure uploaded.</span>
-        @endif
+
+    <div class="property-form-optional">
+        <button class="property-form-optional-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#optional-media-edit" aria-expanded="{{ $expandOptionalMediaEdit ? 'true' : 'false' }}" aria-controls="optional-media-edit">
+            <span>Video &amp; brochure <span class="hint">optional — tour links and PDF handouts</span></span>
+            <span class="toggle-chevron" aria-hidden="true">▼</span>
+        </button>
+        <div id="optional-media-edit" class="collapse property-form-optional-body {{ $expandOptionalMediaEdit ? 'show' : '' }}">
+            <x-text-input2 title="Video Link (YouTube/Vimeo)" name="video_link" :value="old('video_link', $property->video_link)" />
+            <div class="form-group mb-3">
+                <label>Current Brochure</label>
+                @if($property->brochure)
+                    <a href="{{ asset('storage/uploads/brochures/' . $property->brochure) }}" target="_blank" rel="noopener">Download brochure</a>
+                @else
+                    <span>No brochure uploaded.</span>
+                @endif
+            </div>
+            <fieldset class="text has-top-title">
+                <label>Replace Brochure (PDF)</label>
+                <input type="file" name="brochure" class="form-control" tabindex="2" accept="application/pdf">
+            </fieldset>
+        </div>
     </div>
-    <fieldset class="text has-top-title">
-        <label>Replace Brochure (PDF)</label>
-        <input type="file" name="brochure" class="" name="text" tabindex="2"  aria-required="true"  accept="application/pdf">
-    </fieldset>
-    <x-text-input2 title="SEO Title" name="seo_title" :value="old('seo_title', $property->seo_title)" />
-    <x-text-input2 title="SEO Description" name="seo_description" :value="old('seo_description', $property->seo_description)" />
         <div class="form-group mb-3">
          <div class="upload-image-wrap">
                 <div class="text">Current Image</div>
@@ -992,7 +1093,7 @@
                 </div>
             </div>
             <div class="modal-footer" id="progress-footer" style="display: none;">
-                <button type="button" class="btn btn-success btn-lg" onclick="window.location.href='{{ route('admin.properties.index') }}'">
+                <button type="button" class="btn btn-success btn-lg" onclick="window.location.href='{{ $propertyApi['index'] }}'">
                     <i class="flaticon-check me-2"></i>View Properties
                 </button>
             </div>
@@ -1081,7 +1182,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let propertyId = {{ $property->id }};
     let uploadedImages = 0;
     let totalImages = 0;
-    const baseUrl = "{{ url('/') }}";
+    const propertyApi = @json($propertyApi);
     
     if (!form) {
         console.error("Form with ID 'property-form' not found!");
@@ -1186,25 +1287,26 @@ document.addEventListener("DOMContentLoaded", function () {
         const formData = new FormData(form);
         formData.append('_method', 'PUT');
         
-        fetch(`${baseUrl}/admin/properties/update-data/${propertyId}`, {
+        fetch(propertyApi.updateData, {
             method: 'POST',
             body: formData,
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+                'Accept': 'application/json'
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
+        .then(response => response.json().then(data => ({ ok: response.ok, status: response.status, data })))
+        .then(({ ok, status, data }) => {
+            if (ok && data.success) {
                 updateStep1Status('Property data updated successfully!', 'success');
-                
-                // Move to Step 2: Upload new images
-                setTimeout(() => {
-                    startImageUpload();
-                }, 1000);
-            } else {
-                throw new Error(data.message || 'Failed to update property data');
+                setTimeout(() => { startImageUpload(); }, 1000);
+                return;
             }
+            let msg = data.message || 'Failed to update property data';
+            if (status === 422 && data.errors) {
+                msg = Object.values(data.errors).flat().join(' ');
+            }
+            throw new Error(msg);
         })
         .catch(error => {
             console.error('Error updating property data:', error);
@@ -1252,11 +1354,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const formData = new FormData();
         formData.append('image', file);
 
-        fetch(`${baseUrl}/admin/properties/store-images/${propertyId}`, {
+        fetch(`${propertyApi.storeImagesBase}/${propertyId}`, {
             method: 'POST',
             body: formData,
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+                'Accept': 'application/json'
             }
         })
         .then(response => response.json())
@@ -1370,7 +1473,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const imageId = this.getAttribute('data-image-id');
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = '{{ route("admin.properties.deleteImage", ":id") }}'.replace(':id', imageId);
+                form.action = propertyApi.deleteImageBase + '/' + imageId;
                 
                 const csrfToken = document.createElement('input');
                 csrfToken.type = 'hidden';

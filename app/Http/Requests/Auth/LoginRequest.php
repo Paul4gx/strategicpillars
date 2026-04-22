@@ -89,9 +89,6 @@ class LoginRequest extends FormRequest
      */
     public function redirectTo(): string
     {
-        if (Auth::user()->is_admin) {
-            return route('admin.dashboard');
-        }
-        return route('dashboard');
+        return Auth::user()->intendedDashboardUrl();
     }
 }
