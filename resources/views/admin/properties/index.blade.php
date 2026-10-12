@@ -127,13 +127,6 @@
     gap: 12px;
 }
 
-.properties-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
 .empty-state {
     grid-column: 1 / -1;
     text-align: center;
@@ -182,11 +175,6 @@
     
     .header-actions {
         justify-content: center;
-    }
-    
-    .properties-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
     }
     
     .header-content h3 {

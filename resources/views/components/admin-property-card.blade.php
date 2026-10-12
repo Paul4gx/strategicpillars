@@ -7,13 +7,18 @@
 @php
     $editRoute = $editRoute ?? route('admin.properties.edit', $property);
     $destroyRoute = $destroyRoute ?? route('admin.properties.destroy', $property);
+    $locationLine = trim(implode(', ', array_filter([
+        $property->address,
+        $property->city,
+        $property->state,
+    ])));
 @endphp
 
 <div class="admin-property-card">
     <div class="property-image">
         @if($property->images->first())
-            <img src="{{ asset('storage/uploads/properties/' . $property->images->first()->image_path) }}" 
-                 alt="{{ $property->title }}" 
+            <img src="{{ asset('storage/uploads/properties/' . $property->images->first()->image_path) }}"
+                 alt="{{ $property->title }}"
                  class="property-thumbnail">
         @else
             <div class="no-image-placeholder">
@@ -21,368 +26,356 @@
                 <span>No Image</span>
             </div>
         @endif
-        <div class="property-status-badge">
-            <span class="status-{{ strtolower(str_replace(' ', '-', $property->status)) }}">
+        <div class="property-badges">
+            <span class="property-status-badge status-{{ strtolower(str_replace(' ', '-', $property->status)) }}">
                 {{ ucfirst($property->status) }}
             </span>
-        </div>
-        @if($property->featured)
-            <div class="featured-badge">
-                <span>FEATURED</span>
-            </div>
-        @endif
-    </div>
-    
-    <div class="property-content">
-        <div class="property-header">
-            <h4 class="property-title">
-                <a href="{{ route('properties.show', $property->slug) }}">{{ $property->title }}</a>
-            </h4>
-            <div class="property-price">
-                ₦{{ number_format($property->price, 2) }}
-                @if($property->discount_price)
-                    <span class="original-price">₦{{ number_format($property->discount_price, 2) }}</span>
-                @endif
-            </div>
-        </div>
-        
-        <div class="property-location">
-            <i class="flaticon-location"></i>
-            <span>{{ $property->address }}, {{ $property->city }}, {{ $property->state }}</span>
-        </div>
-        
-        <div class="property-details">
-            <div class="detail-item">
-                <i class="flaticon-hotel"></i>
-                <span>{{ $property->bedrooms ?? 'N/A' }} Beds</span>
-            </div>
-            <div class="detail-item">
-                <i class="flaticon-bath-tub"></i>
-                <span>{{ $property->bathrooms ?? 'N/A' }} Baths</span>
-            </div>
-            <div class="detail-item">
-                <i class="flaticon-car"></i>
-                <span>{{ $property->parking_spaces ?? 'N/A' }} Parking</span>
-            </div>
-        </div>
-        
-        <div class="property-meta">
-            <span class="property-type">{{ ucfirst($property->property_type) }}</span>
-            <span class="property-id">ID: {{ $property->id }}</span>
-        </div>
-        @if($property->relationLoaded('realtor') && $property->realtor)
-            <div class="text-muted small mt-8">
-                <i class="flaticon-user"></i> Listing: {{ $property->realtor->publicBrandName() }}
-            </div>
-        @endif
-    </div>
-    
-    <div class="property-actions">
-        <div class="action-buttons">
-            <a href="{{ route('properties.show', $property->slug) }}" 
-               class="btn-action btn-view" 
-               title="View Property">
-                <i class="flaticon-magnifiying-glass"></i>
-            </a>
-            <a href="{{ $editRoute }}" 
-               class="btn-action btn-edit" 
-               title="Edit Property">
-                <i class="flaticon-edit"></i>
-            </a>
-            @if($allowDelete)
-                <form action="{{ $destroyRoute }}" 
-                      method="POST" 
-                      class="delete-form"
-                      onsubmit="return confirmDelete('{{ $property->title }}')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" 
-                            class="btn-action btn-delete" 
-                            title="Delete Property">
-                        <i class="flaticon-delete"></i>
-                    </button>
-                </form>
+            @if($property->featured)
+                <span class="featured-badge">Featured</span>
             @endif
         </div>
     </div>
+
+    <div class="property-body">
+        <div class="property-title-row">
+            <h4 class="property-title" title="{{ $property->title }}">
+                <a href="{{ route('properties.show', $property->slug) }}">{{ $property->title }}</a>
+            </h4>
+        </div>
+
+        <div class="property-price-block">
+            <span class="property-price">₦{{ number_format($property->price, 0) }}</span>
+            @if($property->discount_price)
+                <span class="original-price">₦{{ number_format($property->discount_price, 0) }}</span>
+            @endif
+        </div>
+
+        @if($locationLine !== '')
+            <div class="property-location" title="{{ $locationLine }}">
+                <i class="flaticon-location"></i>
+                <span>{{ $locationLine }}</span>
+            </div>
+        @endif
+
+        <div class="property-details">
+            <span class="detail-item"><i class="flaticon-hotel"></i>{{ $property->bedrooms ?? '—' }} bd</span>
+            <span class="detail-item"><i class="flaticon-bath-tub"></i>{{ $property->bathrooms ?? '—' }} ba</span>
+            <span class="detail-item"><i class="flaticon-car"></i>{{ $property->parking_spaces ?? '—' }} pk</span>
+        </div>
+
+        <div class="property-footer">
+            <div class="property-meta">
+                <span class="property-type">{{ ucfirst(str_replace('_', ' ', $property->property_type)) }}</span>
+                <span class="property-id">#{{ $property->id }}</span>
+            </div>
+            @if($property->relationLoaded('realtor') && $property->realtor)
+                <div class="property-realtor" title="{{ $property->realtor->publicBrandName() }}">
+                    <i class="flaticon-user"></i>
+                    <span>{{ $property->realtor->publicBrandName() }}</span>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <div class="property-actions">
+        <a href="{{ route('properties.show', $property->slug) }}" class="btn-action btn-view" title="View Property">
+            <i class="flaticon-magnifiying-glass"></i>
+        </a>
+        <a href="{{ $editRoute }}" class="btn-action btn-edit" title="Edit Property">
+            <i class="flaticon-edit"></i>
+        </a>
+        @if($allowDelete)
+            <form action="{{ $destroyRoute }}" method="POST" class="delete-form" onsubmit="return confirmDelete('{{ addslashes($property->title) }}')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn-action btn-delete" title="Delete Property">
+                    <i class="flaticon-delete"></i>
+                </button>
+            </form>
+        @endif
+    </div>
 </div>
 
-@push('scripts')
-<script>
-function confirmDelete(propertyTitle) {
-    return confirm(`Are you sure you want to delete "${propertyTitle}"?\n\nThis action cannot be undone and will permanently remove:\n• All property images\n• Property brochure\n• All associated data\n\nClick OK to delete or Cancel to keep the property.`);
-}
-</script>
-@endpush
+@once
+    @push('scripts')
+    <script>
+    function confirmDelete(propertyTitle) {
+        return confirm(`Are you sure you want to delete "${propertyTitle}"?\n\nThis action cannot be undone and will permanently remove:\n• All property images\n• Property brochure\n• All associated data\n\nClick OK to delete or Cancel to keep the property.`);
+    }
+    </script>
+    @endpush
 
-@push('styles')
-<style>
-.admin-property-card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    overflow: hidden;
-    transition: all 0.3s ease;
-    margin-bottom: 20px;
-    display: flex;
-    min-height: 200px;
-}
+    @push('styles')
+    <style>
+    .properties-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 16px;
+        margin-bottom: 30px;
+        align-items: stretch;
+    }
 
-.admin-property-card:hover {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-    transform: translateY(-2px);
-}
+    @media (max-width: 768px) {
+        .properties-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 
-.property-image {
-    position: relative;
-    width: 250px;
-    min-width: 250px;
-    overflow: hidden;
-}
-
-.property-thumbnail {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.admin-property-card:hover .property-thumbnail {
-    transform: scale(1.05);
-}
-
-.no-image-placeholder {
-    width: 100%;
-    height: 100%;
-    background: #f8f9fa;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #6c757d;
-}
-
-.no-image-placeholder i {
-    font-size: 48px;
-    margin-bottom: 8px;
-}
-
-.property-status-badge {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-}
-
-.property-status-badge span {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.status-available { background: #28a745; color: white; }
-.status-sold { background: #dc3545; color: white; }
-.status-rented { background: #ffc107; color: #212529; }
-.status-off-plan { background: #17a2b8; color: white; }
-.status-upcoming { background: #6f42c1; color: white; }
-
-.featured-badge {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-}
-
-.featured-badge span {
-    background: #fd7e14;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.property-content {
-    flex: 1;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.property-header {
-    margin-bottom: 12px;
-}
-
-.property-title {
-    margin: 0 0 8px 0;
-    font-size: 18px;
-    font-weight: 600;
-    line-height: 1.3;
-}
-
-.property-title a {
-    color: #212529;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.property-title a:hover {
-    color: #007bff;
-}
-
-.property-price {
-    font-size: 20px;
-    font-weight: 700;
-    color: #28a745;
-}
-
-.original-price {
-    font-size: 14px;
-    color: #6c757d;
-    text-decoration: line-through;
-    margin-left: 8px;
-}
-
-.property-location {
-    display: flex;
-    align-items: center;
-    margin-bottom: 16px;
-    color: #6c757d;
-    font-size: 14px;
-}
-
-.property-location i {
-    margin-right: 6px;
-    font-size: 16px;
-}
-
-.property-details {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 16px;
-}
-
-.detail-item {
-    display: flex;
-    align-items: center;
-    color: #6c757d;
-    font-size: 14px;
-}
-
-.detail-item i {
-    margin-right: 6px;
-    font-size: 16px;
-}
-
-.property-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 12px;
-    border-top: 1px solid #e9ecef;
-    font-size: 12px;
-    color: #6c757d;
-}
-
-.property-type {
-    background: #e9ecef;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-weight: 500;
-}
-
-.property-actions {
-    padding: 20px;
-    border-left: 1px solid #e9ecef;
-    display: flex;
-    align-items: center;
-    min-width: 80px;
-}
-
-.action-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.btn-action {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-view {
-    background: #17a2b8;
-    color: white;
-}
-
-.btn-view:hover {
-    background: #138496;
-    color: white;
-}
-
-.btn-edit {
-    background: #ffc107;
-    color: #212529;
-}
-
-.btn-edit:hover {
-    background: #e0a800;
-    color: #212529;
-}
-
-.btn-delete {
-    background: #dc3545;
-    color: white;
-}
-
-.btn-delete:hover {
-    background: #c82333;
-    color: white;
-    transform: scale(1.05);
-}
-
-.btn-delete:active {
-    background: #a71e2a;
-    transform: scale(0.95);
-}
-
-.delete-form {
-    display: inline;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
     .admin-property-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        transition: box-shadow 0.2s ease, transform 0.2s ease;
+        display: flex;
         flex-direction: column;
+        min-width: 0;
+        height: 100%;
     }
-    
-    .property-image {
+
+    .admin-property-card:hover {
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+        transform: translateY(-1px);
+    }
+
+    .admin-property-card .property-image {
+        position: relative;
         width: 100%;
-        height: 200px;
+        height: 140px;
+        flex-shrink: 0;
+        overflow: hidden;
+        background: #f1f3f5;
     }
-    
-    .property-actions {
-        border-left: none;
-        border-top: 1px solid #e9ecef;
-        flex-direction: row;
+
+    .admin-property-card .property-thumbnail {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .admin-property-card .no-image-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         justify-content: center;
-        min-width: auto;
+        color: #868e96;
+        font-size: 12px;
     }
-    
-    .action-buttons {
-        flex-direction: row;
+
+    .admin-property-card .no-image-placeholder i {
+        font-size: 32px;
+        margin-bottom: 4px;
     }
-}
-</style>
-@endpush
+
+    .admin-property-card .property-badges {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        right: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        pointer-events: none;
+    }
+
+    .admin-property-card .property-status-badge,
+    .admin-property-card .featured-badge {
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        line-height: 1.2;
+    }
+
+    .admin-property-card .property-status-badge.status-available { background: #28a745; color: #fff; }
+    .admin-property-card .property-status-badge.status-sold { background: #dc3545; color: #fff; }
+    .admin-property-card .property-status-badge.status-rented { background: #ffc107; color: #212529; }
+    .admin-property-card .property-status-badge.status-off-plan { background: #17a2b8; color: #fff; }
+    .admin-property-card .property-status-badge.status-upcoming { background: #6f42c1; color: #fff; }
+
+    .admin-property-card .featured-badge {
+        background: #fd7e14;
+        color: #fff;
+        margin-left: auto;
+    }
+
+    .admin-property-card .property-body {
+        flex: 1;
+        min-width: 0;
+        padding: 12px 14px 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .admin-property-card .property-title {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 1.35;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        word-break: break-word;
+    }
+
+    .admin-property-card .property-title a {
+        color: #212529;
+        text-decoration: none;
+    }
+
+    .admin-property-card .property-title a:hover {
+        color: #0d6efd;
+    }
+
+    .admin-property-card .property-price-block {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 6px 8px;
+        line-height: 1.2;
+    }
+
+    .admin-property-card .property-price {
+        font-size: 16px;
+        font-weight: 700;
+        color: #198754;
+        white-space: nowrap;
+    }
+
+    .admin-property-card .original-price {
+        font-size: 12px;
+        color: #868e96;
+        text-decoration: line-through;
+        white-space: nowrap;
+    }
+
+    .admin-property-card .property-location {
+        display: flex;
+        align-items: flex-start;
+        gap: 4px;
+        font-size: 12px;
+        color: #6c757d;
+        line-height: 1.35;
+        min-width: 0;
+    }
+
+    .admin-property-card .property-location i {
+        flex-shrink: 0;
+        margin-top: 2px;
+        font-size: 13px;
+    }
+
+    .admin-property-card .property-location span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 0;
+    }
+
+    .admin-property-card .property-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 12px;
+        font-size: 12px;
+        color: #495057;
+    }
+
+    .admin-property-card .detail-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+    }
+
+    .admin-property-card .detail-item i {
+        font-size: 13px;
+        color: #868e96;
+    }
+
+    .admin-property-card .property-footer {
+        margin-top: auto;
+        padding-top: 8px;
+        border-top: 1px solid #e9ecef;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .admin-property-card .property-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        color: #868e96;
+        min-width: 0;
+    }
+
+    .admin-property-card .property-type {
+        background: #f1f3f5;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 70%;
+    }
+
+    .admin-property-card .property-realtor {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        color: #6c757d;
+        min-width: 0;
+    }
+
+    .admin-property-card .property-realtor span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .admin-property-card .property-actions {
+        display: flex;
+        border-top: 1px solid #e9ecef;
+        padding: 8px 10px;
+        gap: 8px;
+        justify-content: flex-end;
+        background: #fafbfc;
+    }
+
+    .admin-property-card .btn-action {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: background 0.15s ease;
+    }
+
+    .admin-property-card .btn-view { background: #17a2b8; color: #fff; }
+    .admin-property-card .btn-view:hover { background: #138496; color: #fff; }
+    .admin-property-card .btn-edit { background: #ffc107; color: #212529; }
+    .admin-property-card .btn-edit:hover { background: #e0a800; }
+    .admin-property-card .btn-delete { background: #dc3545; color: #fff; }
+    .admin-property-card .btn-delete:hover { background: #c82333; }
+
+    .admin-property-card .delete-form {
+        display: contents;
+    }
+    </style>
+    @endpush
+@endonce
