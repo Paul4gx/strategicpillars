@@ -4,22 +4,14 @@
 @section('meta_description', 'Meet the Strategic Pillars team: expert agents and staff in Lagos real estate, shortlets, and interiors.')
 
 @section('content')
-                <!-- flat-title -->
-                <div class="flat-title">
-                    <div class="cl-container full">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="content">
-                                    <h2>Our Team</h2>
-                                    <ul class="breadcrumbs">
-                                        <li><a href="{{route('home')}}">Home</a></li><li>/</li><li>Our Team</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /flat-title -->
+                <x-page-header
+                    title="Our Team"
+                    subtitle="Meet the people behind Strategic Pillars."
+                    :items="[
+                        ['label' => 'Home', 'url' => route('home')],
+                        ['label' => 'Team'],
+                    ]"
+                />
 <section class="py-5 bg-light">
     <div class="container">
         <div class="row">

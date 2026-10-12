@@ -4,8 +4,13 @@
 @section('meta_description', 'Interior design project showcase from Strategic Pillars.')
 
 @section('content')
-<section class="tf-section">
+<section class="tf-section interior-show-section">
     <div class="cl-container">
+        <x-page-toolbar :items="[
+            ['label' => 'Home', 'url' => route('home')],
+            ['label' => 'Interiors', 'url' => route('interiors.index')],
+            ['label' => $interior?->title ?? 'Project'],
+        ]" class="mb-4" />
         <div class="row">
             <div class="col-12">
                 <div class="heading-section">

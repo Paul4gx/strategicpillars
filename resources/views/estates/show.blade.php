@@ -4,8 +4,13 @@
 @section('meta_description', Str::limit($estate->description, 150))
 
 @section('content')
-<section class="py-5">
+<section class="py-4">
     <div class="container">
+        <x-page-toolbar :items="[
+            ['label' => 'Home', 'url' => route('home')],
+            ['label' => 'Estates', 'url' => route('estates.index')],
+            ['label' => $estate->name],
+        ]" class="mb-3" />
         <div class="row mb-4">
             <div class="col-md-7">
                 <img src="{{ $estate->cover_image_url ?? asset('template/images/house/featured-1.jpg') }}" class="img-fluid rounded mb-3" alt="{{ $estate->name }}">

@@ -95,6 +95,26 @@
     border-radius: 8px;
     margin: 1rem 0;
 }
+
+.property-listing-contact {
+    font-size: inherit;
+    color: inherit;
+}
+
+.property-listing-contact a {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.property-listing-contact a:hover {
+    color: #1563df;
+    text-decoration: underline;
+}
+
+.property-listing-contact__sep {
+    margin: 0 6px;
+    color: #adb5bd;
+}
 </style>
 @endpush
 
@@ -103,40 +123,31 @@
                     <div class="cl-container">
         <div class="row">
                             <div class="col-12">
-                                <div class="flex items-center justify-between gap30 flex-wrap pt-30 pb-30">
-                                    <ul class="breadcrumbs style-1 justify-start">
-                                        <li><a href="{{ route('home') }}">Home</a></li>
-                                        <li>/</li>
-                                        <li><a href="{{ route('properties.index') }}">Properties</a></li>
-                                        <li>/</li>
-                                        <li>{{ $property->property_type }}</li>
-                                    </ul>
-                                    <div class="list-icons-page">
-                                        {{-- <div class="item">
-                                            <div class="icon">
-                                                <i class="flaticon-heart"></i>
-                                            </div>
-                                            <p>Save</p>
-                                        </div> --}}
-                                        @auth
-                                        @can('update', $property)
-                                            <div class="item" onclick="window.location.href='{{ auth()->user()->isAdmin() ? route('admin.properties.edit', $property) : route('realtor.properties.edit', $property) }}'">
-                                                    <div class="icon">
-                                                        <i class="flaticon-edit"></i>
+                                <x-page-toolbar :items="[
+                                    ['label' => 'Home', 'url' => route('home')],
+                                    ['label' => 'Properties', 'url' => route('properties.index')],
+                                    ['label' => $property->title],
+                                ]">
+                                    <x-slot:actions>
+                                        <div class="list-icons-page">
+                                            @auth
+                                                @can('update', $property)
+                                                    <div class="item" onclick="window.location.href='{{ auth()->user()->isAdmin() ? route('admin.properties.edit', $property) : route('realtor.properties.edit', $property) }}'">
+                                                        <div class="icon">
+                                                            <i class="flaticon-edit"></i>
+                                                        </div>
+                                                        <p>Edit</p>
                                                     </div>
-                                                    <p>Edit</p>
-                                            </div>
-                                        @endcan
-                                    @endauth
-                                        <div class="item">
-                                            <div class="icon">
-                                                <i class="flaticon-outbox"></i>
-                                            </div>
-                                            <p>Share</p>
+                                                @endcan
+                                            @endauth
+                                            <x-listing-share-button
+                                                :url="route('properties.show', $property->slug)"
+                                                :title="$property->title"
+                                                :text="$property->short_description"
+                                            />
                                         </div>
-                
-                                    </div>
-                                </div>
+                                    </x-slot:actions>
+                                </x-page-toolbar>
                             </div>
                             <div class="col-12">
                                 <div class="head-title">
@@ -155,51 +166,9 @@
                                     </div>
                                 </div>
                             </div>
-                            @if($property->realtor)
-                            <div class="col-12">
-                                <div class="wg-box flex gap20 align-items-center flex-wrap" style="padding: 20px 24px; margin-bottom: 24px;">
-                                    @if($property->realtor->avatarUrl())
-                                        <img src="{{ $property->realtor->avatarUrl() }}" alt="{{ $property->realtor->publicBrandName() }}" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover;">
-                                    @else
-                                        <div class="d-flex align-items-center justify-content-center bg-light rounded-circle" style="width: 72px; height: 72px;">
-                                            <i class="flaticon-user" style="font-size: 28px; color: #999;"></i>
-                                        </div>
-                                    @endif
-                                    <div>
-                                        <div class="text-muted" style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em;">Listed by</div>
-                                        <div class="fw-semibold" style="font-size: 18px;">{{ $property->realtor->publicBrandName() }}</div>
-                                        @if($property->realtor->phone)
-                                            <a href="tel:{{ $property->realtor->phone }}" class="d-inline-block mt-4" style="color: #1563df;">{{ $property->realtor->phone }}</a>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                            @endif
                         <div class="col-xl-8">
                                 <div class="content-wrap">
-                                    <div class="thumbs-slider arrow-style-1">
-                                        <div class="swiper-container slider-thumbs-gallery-2">
-                                            <div class="swiper-wrapper">
-                                                @foreach($property->images as $key => $image)
-                                                    <div class="swiper-slide">
-                                                        <img src="{{ asset('storage/uploads/properties/' . $image->image_path) }}" alt="Property Image">
-                                                </div>
-                                                @endforeach
-                                            </div>
-                                            <div class="swiper-button-next has-background thumbs-next"></div>
-                                            <div class="swiper-button-prev has-background thumbs-prev"></div>
-                                        </div>
-                                        <div class="swiper-container slider-thumbs-gallery-1">
-                                            <div class="swiper-wrapper">
-                                              @foreach($property->images as $key => $image)
-                                                    <div class="swiper-slide">
-                                                        <img src="{{ asset('storage/uploads/properties/' . $image->image_path) }}" alt="Property Image">
-                                                </div>
-                                                @endforeach
-
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <x-property-image-gallery :images="$property->images" :alt="$property->title" />
                                     <div class="box-items">
                                         <div class="item wow fadeInUp">
                                             <div class="icon">
@@ -334,7 +303,19 @@
                                             <div class="item wow fadeInUp" data-wow-delay="0.1s">
                                                 <div class="text">Property Status:</div>
                                                 <p>{{ ucfirst(str_replace('_', ' ', $property->status)) }}</p>
-                                            </div>                                            
+                                            </div>
+                                            @if($property->realtor)
+                                            <div class="item wow fadeInUp" data-wow-delay="0.1s">
+                                                <div class="text">Listing contact:</div>
+                                                <p class="property-listing-contact">
+                                                    {{ $property->realtor->publicBrandName() }}
+                                                    @if($property->realtor->phone)
+                                                        <span class="property-listing-contact__sep">·</span>
+                                                        <a href="tel:{{ $property->realtor->phone }}">{{ $property->realtor->phone }}</a>
+                                                    @endif
+                                                </p>
+                                            </div>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="features">

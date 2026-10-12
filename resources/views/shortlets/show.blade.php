@@ -4,8 +4,13 @@
 @section('meta_description', Str::limit($shortlet->description, 150))
 
 @section('content')
-<section class="py-5">
+<section class="py-4">
     <div class="container">
+        <x-page-toolbar :items="[
+            ['label' => 'Home', 'url' => route('home')],
+            ['label' => 'Shortlets', 'url' => route('shortlets.index')],
+            ['label' => $shortlet->title],
+        ]" class="mb-3" />
         <div class="row">
             <div class="col-md-7">
                 <div id="shortletGallery" class="carousel slide mb-4" data-bs-ride="carousel">

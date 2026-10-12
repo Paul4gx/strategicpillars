@@ -10,6 +10,13 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="content">
+                                    <x-page-breadcrumb
+                                        variant="light"
+                                        :items="[
+                                            ['label' => 'Home', 'url' => route('home')],
+                                            ['label' => 'About Us'],
+                                        ]"
+                                    />
                                     <h2>About Strategic Pillars</h2>
                                     <div class="text">Your trusted partner in luxury real estate and interior design excellence</div>
                                 </div>

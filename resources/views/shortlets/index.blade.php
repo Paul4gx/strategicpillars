@@ -4,22 +4,14 @@
 @section('meta_description', 'Browse available shortlet apartments for rent at Strategic Pillars.')
 
 @section('content')
-                <!-- flat-title -->
-                <div class="flat-title">
-                    <div class="cl-container full">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="content">
-                                    <h2>Luxury Shortlet Apartments</h2>
-                                    <ul class="breadcrumbs">
-                                        <li><a href="{{route('home')}}">Home</a></li><li>/</li><li>Our Shortlet</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /flat-title -->
+                <x-page-header
+                    title="Luxury Shortlet Apartments"
+                    subtitle="Premium stays for business and leisure in Lagos."
+                    :items="[
+                        ['label' => 'Home', 'url' => route('home')],
+                        ['label' => 'Shortlets'],
+                    ]"
+                />
 <section class="py-5 bg-light">
     <div class="container">
         <h1 class="mb-4 text-center"></h1>

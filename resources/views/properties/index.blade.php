@@ -4,22 +4,14 @@
 @section('meta_description', 'Browse all available properties for sale, rent, and off-plan at Strategic Pillars.')
 
 @section('content')
-                <!-- flat-title -->
-                <div class="flat-title">
-                    <div class="cl-container full">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="content">
-                                    <h2>Our Properties</h2>
-                                    <ul class="breadcrumbs">
-                                        <li><a href="{{route('home')}}">Home</a></li><li>/</li><li>Our Properties</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /flat-title -->
+                <x-page-header
+                    title="Our Properties"
+                    subtitle="Browse homes for sale, rent, and off-plan across Lagos."
+                    :items="[
+                        ['label' => 'Home', 'url' => route('home')],
+                        ['label' => 'Properties'],
+                    ]"
+                />
 <section class="py-5 bg-light">
     <div class="container">
                     <form method="GET" class="form-search-home5 background-secondary wow fadeInUp" style="margin-top:-50px; margin-bottom: 60px;">

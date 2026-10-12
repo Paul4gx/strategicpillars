@@ -4,9 +4,16 @@
 @section('meta_description', 'Browse all estates developed by Strategic Pillars in Lagos.')
 
 @section('content')
+<x-page-header
+    title="Our Estates"
+    subtitle="Explore developments and communities by Strategic Pillars."
+    :items="[
+        ['label' => 'Home', 'url' => route('home')],
+        ['label' => 'Estates'],
+    ]"
+/>
 <section class="py-5 bg-light">
     <div class="container">
-        <h1 class="mb-4 text-center">Our Estates</h1>
         <div class="row">
             @forelse($estates as $estate)
                 <div class="col-md-4 mb-4">
