@@ -49,6 +49,18 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if (! $user->isActive()) {
+            Auth::logout();
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'This account has been deactivated. Please contact an administrator.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 
@@ -89,6 +101,9 @@ class LoginRequest extends FormRequest
      */
     public function redirectTo(): string
     {
-        return Auth::user()->intendedDashboardUrl();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        return $user->intendedDashboardUrl();
     }
 }

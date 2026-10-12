@@ -18,7 +18,7 @@ class CompleteRealtorOnboardingRequest extends FormRequest
             'realty_display_name' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:32'],
             'bio' => ['nullable', 'string', 'max:5000'],
-            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'],
+            'avatar' => ['nullable', 'file', 'image', 'mimes:jpeg,jpg,png,gif,webp', 'max:10240'],
         ];
     }
 
@@ -27,6 +27,9 @@ class CompleteRealtorOnboardingRequest extends FormRequest
         return [
             'realty_display_name.required' => 'Enter your realty or brand name as it should appear to clients.',
             'phone.required' => 'Add a contact phone number for your listings.',
+            'avatar.image' => 'Please upload a valid image file (JPG, PNG, GIF, or WebP).',
+            'avatar.mimes' => 'Photo must be a JPG, PNG, GIF, or WebP image.',
+            'avatar.max' => 'Photo may not be larger than 10 MB.',
         ];
     }
 }

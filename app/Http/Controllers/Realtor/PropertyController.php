@@ -27,14 +27,16 @@ class PropertyController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('realtor.properties.index', compact('properties'));
+        return view('admin.properties.index', [
+            'properties' => $properties,
+            'portal' => 'realtor',
+        ]);
     }
 
     public function store(StorePropertyDataRequest $request)
     {
         try {
             $validated = $request->validated();
-            unset($validated['listing_user_id']);
 
             $property = new Property($validated);
             $property->user_id = $request->user()->id;
@@ -83,7 +85,6 @@ class PropertyController extends Controller
     public function update(UpdatePropertyDataRequest $request, Property $property)
     {
         $validated = $request->validated();
-        unset($validated['listing_user_id']);
 
         $property->fill($validated);
         $property->featured = $request->has('featured');
@@ -114,7 +115,6 @@ class PropertyController extends Controller
         $this->authorize('create', Property::class);
 
         $estates = \App\Models\Estate::all();
-        $layout = 'realtor.layouts.app';
         $propertyApi = [
             'storeData' => route('realtor.properties.store-data'),
             'storeImagesBase' => url('/realtor/properties/store-images'),
@@ -122,14 +122,13 @@ class PropertyController extends Controller
             'formAction' => route('realtor.properties.store'),
         ];
 
-        return view('admin.properties.create', compact('estates', 'propertyApi', 'layout'));
+        return view('admin.properties.create', compact('estates', 'propertyApi'));
     }
 
     public function storeData(StorePropertyDataRequest $request)
     {
         try {
             $validated = $request->validated();
-            unset($validated['listing_user_id']);
 
             $property = new Property($validated);
             $property->user_id = $request->user()->id;
@@ -199,7 +198,6 @@ class PropertyController extends Controller
 
         $property->load('images');
         $estates = \App\Models\Estate::all();
-        $layout = 'realtor.layouts.app';
         $propertyApi = [
             'updateData' => route('realtor.properties.update-data', $property),
             'storeImagesBase' => url('/realtor/properties/store-images'),
@@ -208,14 +206,13 @@ class PropertyController extends Controller
             'formAction' => route('realtor.properties.update', $property),
         ];
 
-        return view('admin.properties.edit', compact('property', 'estates', 'propertyApi', 'layout'));
+        return view('admin.properties.edit', compact('property', 'estates', 'propertyApi'));
     }
 
     public function updateData(UpdatePropertyDataRequest $request, Property $property)
     {
         try {
             $validated = $request->validated();
-            unset($validated['listing_user_id']);
 
             $property->fill($validated);
             $property->featured = $request->has('featured');

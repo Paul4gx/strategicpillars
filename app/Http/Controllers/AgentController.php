@@ -9,7 +9,7 @@ class AgentController extends Controller
 {
     public function index()
     {
-        $agents = TeamMember::orderBy('sort_order')->get();
+        $agents = TeamMember::visible()->orderBy('sort_order')->get();
         return view('agents', compact('agents'));
     }
 } 

@@ -24,7 +24,7 @@ class OnboardingController extends Controller
         $user->phone = $request->validated('phone');
         $user->bio = $request->validated('bio');
 
-        if ($request->hasFile('avatar')) {
+        if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
             if ($user->avatar_path) {
                 Storage::disk('public')->delete('uploads/team/'.$user->avatar_path);
             }

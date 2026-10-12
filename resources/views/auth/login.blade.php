@@ -11,6 +11,11 @@
                 <div class="modal-content">
                     <div class="content-right">
                         <h4 class="text-center">Sign into your account</h4>
+                        @if (session('status'))
+                            <div class="alert alert-success text-center mb-15" role="alert">
+                                {{ session('status') }}
+                            </div>
+                        @endif
                         <form method="POST" action="{{ route('login') }}" class="form-login">
                             @csrf
                             <fieldset class="email">

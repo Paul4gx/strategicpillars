@@ -3,7 +3,7 @@
 @section('content')
 <div class="wg-box" style="max-width: 560px;">
     <h3 class="mb-10">Invite a realtor</h3>
-    <p class="text-muted mb-25">Creates a realtor login. They receive an email to choose a password, then complete their public profile.</p>
+    <p class="text-muted mb-25">Creates a realtor login and adds them to the team list (hidden from the public site until you turn visibility on). They receive an email to choose a password, then complete their public profile.</p>
 
     @if ($errors->any())
         <div class="alert alert-danger">

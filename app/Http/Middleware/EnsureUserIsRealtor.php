@@ -15,6 +15,10 @@ class EnsureUserIsRealtor
             abort(403, 'This area is for realtor accounts only.');
         }
 
+        if (! $user->isActive()) {
+            abort(403, 'This realtor account has been deactivated.');
+        }
+
         return $next($request);
     }
 }

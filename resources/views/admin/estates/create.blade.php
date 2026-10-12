@@ -120,7 +120,7 @@
  <div class="wg-box pl-44 mb-20">
 <h3>Add New Estate</h3>
 <form id="estate-form" 
-      action="{{ route('admin.estates.store') }}" 
+      action="{{ $isRealtorPortal ? route('realtor.estates.store') : route('admin.estates.store') }}" 
       method="POST" 
       enctype="multipart/form-data" 
       class="form-bacsic-infomation flex gap30 flex-column">
@@ -150,127 +150,9 @@
     {{-- Estate Amenities Section --}}
     <div class="form-group">
         <label>Estate Amenities</label>
-        @php
-            $amenities = [
-                "Climate & Comfort" => [
-                    "Air Conditioning",
-                    "Heating",
-                    "Ceiling Fans",
-                    "Ventilation System",
-                    "Humidifier / Dehumidifier",
-                    "Insulation / Energy-efficient Windows",
-                ],
-                "Interior Features" => [
-                    "Window Coverings",
-                    "Flooring",
-                    "Built-in Wardrobes",
-                    "Walk-in Closet",
-                    "Fireplace",
-                    "Skylights",
-                    "Smart Home Controls",
-                    "Soundproof Walls",
-                ],
-                "Kitchen & Dining" => [
-                    "Refrigerator / Freezer",
-                    "Microwave",
-                    "Oven",
-                    "Stove / Cooktop",
-                    "Dishwasher",
-                    "Wine Cooler",
-                    "Pantry",
-                    "Breakfast Bar / Island",
-                    "Garbage Disposal",
-                ],
-                "Bathrooms & Wellness" => [
-                    "Bathtub",
-                    "Sauna",
-                    "Steam Room",
-                    "Shower Cabin",
-                    "Double Sink Vanity",
-                    "Heated Towel Racks",
-                ],
-                "Laundry & Utilities" => [
-                    "Washer",
-                    "Dryer",
-                    "Laundry Room",
-                    "Ironing Facilities",
-                    "Clothesline / Drying Rack",
-                    "Water Heater",
-                    "Backup Generator",
-                    "Solar Panels",
-                ],
-                "Technology & Connectivity" => [
-                    "WiFi / Broadband Internet",
-                    "TV Cable / Satellite TV",
-                    "Home Theater",
-                    "Intercom System",
-                    "Smart Door Locks / Video Doorbell",
-                    "EV Charging Station",
-                ],
-                "Lifestyle & Recreation" => [
-                    "Swimming Pool",
-                    "Jacuzzi / Hot Tub",
-                    "Gym / Fitness Center",
-                    "Barbeque / Outdoor Grill",
-                    "Game Room",
-                    "Cinema Room",
-                    "Library / Study Room",
-                    "Wine Cellar",
-                    "Kids' Play Area",
-                ],
-                "Outdoor & Landscaping" => [
-                    "Lawn / Garden",
-                    "Patio / Deck",
-                    "Balcony / Terrace",
-                    "Rooftop Access",
-                    "Outdoor Kitchen",
-                    "Fire Pit",
-                    "Pergola / Gazebo",
-                    "Fencing / Privacy Screens",
-                    "Sprinkler / Irrigation System",
-                ],
-                "Parking & Access" => [
-                    "Garage",
-                    "Carport",
-                    "Driveway",
-                    "Visitor Parking",
-                    "Gated Entry",
-                    "Handicap Accessibility",
-                ],
-                "Office & Commercial Features" => [
-                    "Conference / Meeting Rooms",
-                    "Reception Area",
-                    "Break Room / Kitchenette",
-                    "Co-working Spaces",
-                    "Printing / Copy Room",
-                    "Security Desk / Concierge",
-                    "Elevator Access",
-                    "Commercial HVAC System",
-                ],
-                "Safety & Security" => [
-                    "Smoke Detectors",
-                    "Fire Sprinkler System",
-                    "Fire Extinguishers",
-                    "Security Cameras",
-                    "Burglar Alarm",
-                    "24hr Security / Gated Community",
-                    "Safe Room / Panic Room",
-                ],
-                "Building & Structural" => [
-                    "Basement",
-                    "Attic",
-                    "Storage Room",
-                    "Workshop / Tool Shed",
-                    "High Ceilings",
-                    "Open Floor Plan",
-                    "Soundproof Windows",
-                    "Energy-efficient Design",
-                ],
-            ];
-            $oldAmenities = old('amenities', []);
-        @endphp
+        @php($oldAmenities = old('amenities', []))
         
-        @foreach($amenities as $category => $features)
+@foreach(config('property_amenities') as $category => $features)
             <div class="amenity-category-collapsible">
                 <h4 class="amenity-category-header" onclick="toggleAmenityCategory('{{ str_replace([' ', '/', '&'], ['_', '_', 'and'], $category) }}')">
                     {{ $category }}
@@ -404,7 +286,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // On success, redirect or show message
     myDropzone.on("successmultiple", function (files, response) {
-        window.location.href = "{{ route('admin.estates.index') }}";
+        window.location.href = "{{ $isRealtorPortal ? route('realtor.estates.index') : route('admin.estates.index') }}";
     });
 
     myDropzone.on("errormultiple", function (files, response) {

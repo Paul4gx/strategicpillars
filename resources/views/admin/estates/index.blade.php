@@ -9,7 +9,7 @@
         <div class="text-content">Manage all estates in your portfolio</div>
     </div>
     <div class="header-actions">
-        <a href="{{ route('admin.estates.create') }}" class="tf-button-default">
+        <a href="{{ $estatesCreateRoute }}" class="tf-button-default">
             <i class="flaticon-plus"></i> Add New Estate
         </a>
     </div>
@@ -25,7 +25,11 @@
 
 <div class="estates-grid">
     @forelse($estates as $estate)
-        <x-admin-estate-card :estate="$estate" />
+        <x-admin-estate-card
+            :estate="$estate"
+            :editRoute="$isRealtorPortal ? route('realtor.estates.edit', $estate) : null"
+            :allowDelete="! $isRealtorPortal"
+        />
     @empty
         <div class="empty-state">
             <div class="empty-icon">
@@ -33,7 +37,7 @@
             </div>
             <h4>No Estates Found</h4>
             <p>You haven't added any estates yet. Start by adding your first estate.</p>
-            <a href="{{ route('admin.estates.create') }}" class="tf-button-primary">
+            <a href="{{ $estatesCreateRoute }}" class="tf-button-primary">
                 <i class="flaticon-plus"></i> Add Your First Estate
             </a>
         </div>

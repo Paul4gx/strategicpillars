@@ -11,15 +11,22 @@ class TeamMember extends Model
 
     protected $fillable = [
         'user_id',
+        'is_visible',
         'name', 'role', 'email', 'phone', 'bio', 'photo', 'social_links', 'sort_order',
     ];
 
     protected $casts = [
+        'is_visible' => 'boolean',
         'social_links' => 'array',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function scopeVisible($query)
+    {
+        return $query->where('is_visible', true);
     }
 } 

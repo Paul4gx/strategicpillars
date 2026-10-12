@@ -35,7 +35,7 @@ class PropertyPolicy
 
     public function delete(User $user, Property $property): bool
     {
-        return $this->update($user, $property);
+        return $user->isAdmin() && $this->update($user, $property);
     }
 
     public function deleteImage(User $user, Property $property): bool

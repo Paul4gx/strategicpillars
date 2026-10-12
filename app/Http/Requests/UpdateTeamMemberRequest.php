@@ -10,7 +10,7 @@ class UpdateTeamMemberRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->isAdmin() ?? false;
+        return $this->user()?->canManageTeam() ?? false;
     }
 
     public function rules(): array
@@ -36,6 +36,7 @@ class UpdateTeamMemberRequest extends FormRequest
             'bio' => ['nullable', 'string'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp'],
             'sort_order' => ['nullable', 'integer'],
+            'is_visible' => ['sometimes', 'boolean'],
             'social_links' => ['nullable', 'array'],
             'social_links.*.platform' => ['nullable', 'string', 'max:50'],
             'social_links.*.username' => ['nullable', 'string', 'max:255'],

@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="wg-box pl-44 mb-20">
-    <h1 class="h3 mb-4 text-gray-800">Edit Team Member</h1>
+    <h1 class="h3 mb-50 text-gray-800">Edit Team Member</h1>
     <form action="{{ route('admin.team.update', $team) }}" method="POST" enctype="multipart/form-data" class="form-bacsic-infomation flex gap30 flex-column">
         @csrf
         @method('PUT')
@@ -13,7 +13,12 @@
 
         @if($team->user_id && $team->user)
             <div class="alert alert-info py-10 px-15 mb-15">
-                <strong>Realtor login active.</strong> This person can sign in at the usual login page and use <a href="{{ url('/realtor') }}" target="_blank" rel="noopener">the realtor workspace</a> with {{ $team->user->email }}.
+                <strong>Realtor login {{ $team->user->isActive() ? 'active' : 'deactivated' }}.</strong>
+                @if($team->user->isActive())
+                    This person can sign in at the usual login page and use the realtor workspace with {{ $team->user->email }}.
+                @else
+                    This login exists but is currently blocked from signing in.
+                @endif
             </div>
         @else
             <fieldset class="border rounded p-15 mb-15" style="border-color: #dee2e6;">
@@ -29,6 +34,16 @@
 
         <x-text-input2 title="Phone" type="tel" name="phone" type-class="text" value="{{ old('phone', $team->phone) }}" required/>
         <x-textarea2 name="bio" title="Bio" value="{{ old('bio', $team->bio) }}" required/>
+        <fieldset class="border rounded p-2" style="border-color: #dee2e6;">
+            <label class="d-flex align-items-start gap10 cursor-pointer mb-0">
+                <input type="hidden" name="is_visible" value="0">
+                <input type="checkbox" name="is_visible" value="1" class="" @checked(old('is_visible', $team->is_visible))>
+                <span>
+                    <strong>Show this profile on public pages</strong>
+                    <span class="d-block text-muted small">Turn this off to hide the team member from the homepage and agents page without deleting the profile.</span>
+                </span>
+            </label>
+        </fieldset>
         <x-text-input2 title="Sort Order" type="number" name="sort_order" type-class="text" value="{{ old('sort_order', $team->sort_order) }}" required/>
         
         <div class="form-group">
@@ -118,7 +133,7 @@
 @push('scripts')
 <script>
 // Initialize social index based on existing social links
-let socialIndex = {{ $socialIndex ?? 0 }};
+let socialIndex = document.querySelectorAll('#social-links .input-group').length;
 
 document.getElementById('add-social').onclick = function() {
     var container = document.getElementById('social-links');

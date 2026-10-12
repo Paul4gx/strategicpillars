@@ -16,6 +16,6 @@
             <p><strong>Payment:</strong> {{ ucfirst($booking->payment_status) }}</p>
         </div>
     </div>
-    <a href="{{ route('bookings.index') }}" class="btn btn-secondary">Back to Bookings</a>
+    <a href="{{ route('admin.bookings.index') }}" class="btn btn-secondary">Back to Bookings</a>
 </div>
 @endsection 

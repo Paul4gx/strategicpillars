@@ -33,6 +33,6 @@
             @endif
         </div>
     </div>
-    <a href="{{ route('estates.index') }}" class="btn btn-secondary">Back to Estates</a>
+    <a href="{{ route('admin.estates.index') }}" class="btn btn-secondary">Back to Estates</a>
 </div>
 @endsection 

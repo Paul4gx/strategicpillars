@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Realtor\DashboardController;
+use App\Http\Controllers\Realtor\EstateController;
 use App\Http\Controllers\Realtor\OnboardingController;
 use App\Http\Controllers\Realtor\PropertyController;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,12 @@ Route::middleware(['auth', 'verified', 'realtor'])->prefix('realtor')->name('rea
         Route::put('properties/update-data/{property}', [PropertyController::class, 'updateData'])->name('properties.update-data');
         Route::put('properties/{property}', [PropertyController::class, 'update'])->name('properties.update');
         Route::delete('properties/image/{image}', [PropertyController::class, 'deleteImage'])->name('properties.deleteImage');
-        Route::delete('properties/{property}', [PropertyController::class, 'destroy'])->name('properties.destroy');
+
+        Route::get('estates', [EstateController::class, 'index'])->name('estates.index');
+        Route::get('estates/create', [EstateController::class, 'create'])->name('estates.create');
+        Route::post('estates', [EstateController::class, 'store'])->name('estates.store');
+        Route::get('estates/{estate}/edit', [EstateController::class, 'edit'])->name('estates.edit');
+        Route::put('estates/{estate}', [EstateController::class, 'update'])->name('estates.update');
+        Route::delete('estates/image/{id}', [EstateController::class, 'deleteImage'])->name('estates.deleteImage');
     });
 });

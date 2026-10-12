@@ -20,6 +20,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('estates/image/{id}', [App\Http\Controllers\Admin\EstateController::class, 'deleteImage'])->name('estates.deleteImage');
     Route::resource('bookings', App\Http\Controllers\Admin\BookingController::class);
     Route::post('bookings/block-dates/{propertyId}', [App\Http\Controllers\Admin\BookingController::class, 'blockDates'])->name('bookings.blockDates');
+    Route::patch('team/{team}/listing-account', [App\Http\Controllers\Admin\TeamMemberController::class, 'toggleListingAccount'])->name('team.toggle-listing-account');
+    Route::patch('team/{team}/visibility', [App\Http\Controllers\Admin\TeamMemberController::class, 'toggleVisibility'])->name('team.toggle-visibility');
+    Route::post('team/{team}/resend-invite', [App\Http\Controllers\Admin\TeamMemberController::class, 'resendInvite'])->name('team.resend-invite');
     Route::resource('team', App\Http\Controllers\Admin\TeamMemberController::class);
     Route::get('team-invite', [App\Http\Controllers\Admin\RealtorInviteController::class, 'create'])->name('team.invite.create');
     Route::post('team-invite', [App\Http\Controllers\Admin\RealtorInviteController::class, 'store'])->name('team.invite.store');

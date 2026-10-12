@@ -69,10 +69,7 @@
                                                         <div class="title">Type</div>
                                                         <select name="type" class="nice-select style-white">
                                                             <option value="">All Type</option>
-                                                            @php
-                                                                $propertyTypes = config('property_types.flat_list', []);
-                                                            @endphp
-                                                            @foreach($propertyTypes as $typeKey => $typeLabel)
+                                                            @foreach(config('property_types.flat_list', []) as $typeKey => $typeLabel)
                                                                 <option value="{{ $typeKey }}" @if(request('type') == $typeKey) selected @endif>{{ $typeLabel }}</option>
                                                             @endforeach
                                                         </select>
@@ -168,10 +165,7 @@
                                                         <div class="title">Type</div>
                                                         <select name="type" class="nice-select">
                                                             <option value="">All Type</option>
-                                                            @php
-                                                                $propertyTypes = config('property_types.flat_list', []);
-                                                            @endphp
-                                                            @foreach($propertyTypes as $typeKey => $typeLabel)
+                                                            @foreach(config('property_types.flat_list', []) as $typeKey => $typeLabel)
                                                                 <option value="{{ $typeKey }}" @if(request('type') == $typeKey) selected @endif>{{ $typeLabel }}</option>
                                                             @endforeach
                                                         </select>
@@ -407,22 +401,31 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Tab switching functionality
-    const tabItems = document.querySelectorAll('.widget-menu-tab .item-title');
-    const tabContents = document.querySelectorAll('.widget-content-tab .widget-content-inner');
-    
-    tabItems.forEach((item, index) => {
-        item.addEventListener('click', function() {
-            // Remove active class from all tabs and contents
-            tabItems.forEach(tab => tab.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-            
-            // Add active class to clicked tab and corresponding content
-            this.classList.add('active');
-            tabContents[index].classList.add('active');
+    function submitHeroSearchForm(form) {
+        const params = new URLSearchParams(new FormData(form));
+        for (const [key, value] of [...params.entries()]) {
+            if (value === '') {
+                params.delete(key);
+            }
+        }
+        const query = params.toString();
+        window.location.href = query ? form.action + '?' + query : form.action;
+    }
+
+    document.querySelectorAll('.widget-tabs .form-search-home6').forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            submitHeroSearchForm(form);
+        });
+
+        form.querySelectorAll('.button-submit button').forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+                submitHeroSearchForm(form);
+            });
         });
     });
-    
+
     // Filter toggle functionality
     const filterButtons = document.querySelectorAll('.tf-button-filter');
     const filterContents = document.querySelectorAll('.open-filter');

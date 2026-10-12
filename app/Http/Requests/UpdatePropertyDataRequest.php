@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Models\Property;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class UpdatePropertyDataRequest extends FormRequest
 {
@@ -20,16 +19,7 @@ class UpdatePropertyDataRequest extends FormRequest
 
     public function rules(): array
     {
-        $rules = StorePropertyDataRequest::attributeRules();
-        if ($this->user()->isAdmin()) {
-            $rules['listing_user_id'] = [
-                'nullable',
-                'integer',
-                Rule::exists('users', 'id')->where('role', 'realtor'),
-            ];
-        }
-
-        return $rules;
+        return StorePropertyDataRequest::attributeRules();
     }
 
     public function messages(): array
@@ -40,7 +30,6 @@ class UpdatePropertyDataRequest extends FormRequest
             'price.required' => 'Enter a price for this listing.',
             'currency.required' => 'Select a currency.',
             'property_type.required' => 'Select a property type.',
-            'listing_user_id.exists' => 'Choose a valid realtor account for this listing.',
         ];
     }
 }

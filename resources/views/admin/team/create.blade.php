@@ -19,7 +19,17 @@
                     </label>
                 </fieldset>
                 <x-text-input2 title="Phone" type="tel" name="phone" type-class="text" required/>
-                <x-textarea2 name="bio" title="Bio" required/>
+                <x-textarea2 name="bio" title="Bio"/>
+                <fieldset class="border rounded p-15 mb-15" style="border-color: #dee2e6;">
+                    <label class="d-flex align-items-start gap10 cursor-pointer mb-0">
+                        <input type="hidden" name="is_visible" value="0">
+                        <input type="checkbox" name="is_visible" value="1" class="mt-5" @checked(old('is_visible', true))>
+                        <span>
+                            <strong>Show this profile on public pages</strong>
+                            <span class="d-block text-muted small mt-5">Turn this off to keep the profile in admin only until it is ready to show on the homepage and agents page.</span>
+                        </span>
+                    </label>
+                </fieldset>
                 <x-text-input2 title="Sort Order" type="number" name="sort_order" type-class="text" required/>
                 <div class="form-group">
     <label>Social Links</label>

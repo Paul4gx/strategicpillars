@@ -42,17 +42,18 @@
                         <nav class="main-menu">
                             <ul class="navigation">
                                 <li><a href="{{ route('home') }}">Home</a></li>
-                                <li><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                                <li><a href="{{ route('admin.properties.index') }}">Properties</a></li>
-                                <li><a href="{{ route('admin.estates.index') }}">Estates</a></li>
-                                {{-- <li><a href="{{ route('admin.bookings.index') }}">Bookings</a></li> --}}
-                                <li><a href="{{ route('admin.team.index') }}">Team</a></li>
+                                <li><a href="{{ $dashboardRoute }}">Dashboard</a></li>
+                                <li><a href="{{ $propertiesIndexRoute }}">Properties</a></li>
+                                <li><a href="{{ $estatesIndexRoute }}">Estates</a></li>
+                                @unless($isRealtorPortal)
+                                    <li><a href="{{ route('admin.team.index') }}">Team</a></li>
+                                @endunless
                                 <li><a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
                             </ul>
                         </nav>
                         <div class="header-right gap30">
                             <div class="header-btn">
-                                <a href="{{route('profile.edit')}}" class="tf-button-default"><i class="flaticon-user"></i> {{ auth()->user()->name ?? 'Admin' }}</a>
+                                <a href="{{ $profileRoute }}" class="tf-button-default"><i class="flaticon-user"></i> {{ auth()->user()->name ?? 'Admin' }}</a>
                             </div>
                         </div>
                         <a class="mobile-nav-toggler mobile-button" href="#menu"></a>
@@ -64,20 +65,19 @@
                         <i class="icon-close"></i>
                     </a> --}}
                     <ul>
-                        <li class="@if(request()->routeIs('admin.dashboard')) active @endif">
-                            <a href="{{ route('admin.dashboard') }}"><i class="flaticon-house"></i> Dashboard</a>
+                        <li class="@if(request()->routeIs('admin.dashboard') || request()->routeIs('realtor.dashboard')) active @endif">
+                            <a href="{{ $dashboardRoute }}"><i class="flaticon-house"></i> Dashboard</a>
                         </li>
-                        <li class="@if(request()->routeIs('admin.team-members.*')) active @endif">
-                            <a href="{{ route('admin.team.index') }}"><i class="flaticon-user"></i> Team</a>
+                        @unless($isRealtorPortal)
+                            <li class="@if(request()->routeIs('admin.team*')) active @endif">
+                                <a href="{{ route('admin.team.index') }}"><i class="flaticon-user"></i> Team</a>
+                            </li>
+                        @endunless
+                        <li class="@if(request()->routeIs('admin.properties.*') || request()->routeIs('realtor.properties.*')) active @endif">
+                            <a href="{{ $propertiesIndexRoute }}"><i class="flaticon-home-2"></i> Properties</a>
                         </li>
-                        {{-- <li class="@if(request()->routeIs('admin.bookings.*')) active @endif">
-                            <a href="{{ route('admin.bookings.index') }}"><i class="flaticon-chat-bubble"></i>Bookings</a>
-                        </li> --}}
-                        <li class="@if(request()->routeIs('admin.properties.*')) active @endif">
-                            <a href="{{ route('admin.properties.index') }}"><i class="flaticon-home-2"></i> Properties</a>
-                        </li>
-                        <li class="@if(request()->routeIs('admin.estates.*')) active @endif">
-                            <a href="{{ route('admin.estates.index') }}"><i class="flaticon-layers-1"></i> Estates</a>
+                        <li class="@if(request()->routeIs('admin.estates.*') || request()->routeIs('realtor.estates.*')) active @endif">
+                            <a href="{{ $estatesIndexRoute }}"><i class="flaticon-layers-1"></i> Estates</a>
                         </li>
                         <li>
                             <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="flaticon-logout"></i> Logout</a>
@@ -95,20 +95,19 @@
                                 <li class="@if(request()->routeIs('home')) active @endif">
                                     <a href="{{ route('home') }}"><i class="flaticon-home"></i>Home</a>
                                 </li>
-                                <li class="@if(request()->routeIs('admin.dashboard')) active @endif">
-                                    <a href="{{ route('admin.dashboard') }}"><i class="flaticon-house"></i>Dashboard</a>
+                                <li class="@if(request()->routeIs('admin.dashboard') || request()->routeIs('realtor.dashboard')) active @endif">
+                                    <a href="{{ $dashboardRoute }}"><i class="flaticon-house"></i>Dashboard</a>
                                 </li>
-                                <li class="@if(request()->routeIs('admin.team-members.*')) active @endif">
-                                    <a href="{{ route('admin.team.index') }}"><i class="flaticon-user"></i>Team</a>
+                                @unless($isRealtorPortal)
+                                    <li class="@if(request()->routeIs('admin.team*')) active @endif">
+                                        <a href="{{ route('admin.team.index') }}"><i class="flaticon-user"></i>Team</a>
+                                    </li>
+                                @endunless
+                                <li class="@if(request()->routeIs('admin.properties.*') || request()->routeIs('realtor.properties.*')) active @endif">
+                                    <a href="{{ $propertiesIndexRoute }}"><i class="flaticon-home-2"></i>Properties</a>
                                 </li>
-                                {{-- <li class="@if(request()->routeIs('admin.bookings.*')) active @endif">
-                                    <a href="{{ route('admin.bookings.index') }}"><i class="flaticon-chat-bubble"></i>Bookings</a>
-                                </li> --}}
-                                <li class="@if(request()->routeIs('admin.properties.*')) active @endif">
-                                    <a href="{{ route('admin.properties.index') }}"><i class="flaticon-home-2"></i>Properties</a>
-                                </li>
-                                <li class="@if(request()->routeIs('admin.estates.*')) active @endif">
-                                    <a href="{{ route('admin.estates.index') }}"><i class="flaticon-layers-1"></i>Estates</a>
+                                <li class="@if(request()->routeIs('admin.estates.*') || request()->routeIs('realtor.estates.*')) active @endif">
+                                    <a href="{{ $estatesIndexRoute }}"><i class="flaticon-layers-1"></i>Estates</a>
                                 </li>
                                 <li>
                                     <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="flaticon-logout"></i>Logout</a>

@@ -21,11 +21,11 @@
 
 <div class="admin-header">
     <div class="header-content">
-        <h3>Properties Management</h3>
-        <div class="text-content">Manage all properties in your portfolio</div>
+        <h3>{{ $isRealtorPortal ? 'Your Properties' : 'Properties Management' }}</h3>
+        <div class="text-content">{{ $isRealtorPortal ? 'Manage your listings' : 'Manage all properties in your portfolio' }}</div>
     </div>
     <div class="header-actions">
-        <a href="{{ route('admin.properties.create') }}" class="tf-button-default">
+        <a href="{{ $propertiesCreateRoute }}" class="tf-button-default">
             <i class="flaticon-plus"></i> Add New Property
         </a>
     </div>
@@ -33,7 +33,12 @@
 
 <div class="properties-grid">
     @forelse($properties as $property)
-        <x-admin-property-card :property="$property" />
+        <x-admin-property-card
+            :property="$property"
+            :editRoute="$isRealtorPortal ? route('realtor.properties.edit', $property) : null"
+            :destroyRoute="$isRealtorPortal ? null : null"
+            :allowDelete="! $isRealtorPortal"
+        />
     @empty
         <div class="empty-state">
             <div class="empty-icon">
@@ -41,7 +46,7 @@
             </div>
             <h4>No Properties Found</h4>
             <p>You haven't added any properties yet. Start by adding your first property.</p>
-            <a href="{{ route('admin.properties.create') }}" class="tf-button-primary">
+            <a href="{{ $propertiesCreateRoute }}" class="tf-button-primary">
                 <i class="flaticon-plus"></i> Add Your First Property
             </a>
         </div>

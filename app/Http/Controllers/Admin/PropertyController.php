@@ -9,7 +9,6 @@ use App\Http\Requests\StorePropertyImageRequest;
 use App\Http\Requests\UpdatePropertyDataRequest;
 use App\Models\Property;
 use App\Models\PropertyImage;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -32,10 +31,6 @@ class PropertyController extends Controller
         $this->authorize('create', Property::class);
 
         $estates = \App\Models\Estate::all();
-        $realtorAssignees = \App\Models\User::query()
-            ->where('role', \App\Enums\UserRole::Realtor)
-            ->orderBy('name')
-            ->get();
 
         $propertyApi = [
             'storeData' => route('admin.properties.store-data'),
@@ -44,18 +39,16 @@ class PropertyController extends Controller
             'formAction' => route('admin.properties.store'),
         ];
 
-        return view('admin.properties.create', compact('estates', 'realtorAssignees', 'propertyApi'));
+        return view('admin.properties.create', compact('estates', 'propertyApi'));
     }
 
     public function storeData(StorePropertyDataRequest $request)
     {
         try {
             $validated = $request->validated();
-            $listingUserId = $this->resolveListingUserId($request, $validated);
-            unset($validated['listing_user_id']);
 
             $property = new Property($validated);
-            $property->user_id = $listingUserId;
+            $property->user_id = $request->user()->id;
             $property->slug = Str::slug($request->title).'-'.uniqid();
             $property->featured = $request->has('featured');
 
@@ -120,11 +113,9 @@ class PropertyController extends Controller
     {
         try {
             $validated = $request->validated();
-            $listingUserId = $this->resolveListingUserId($request, $validated);
-            unset($validated['listing_user_id']);
 
             $property = new Property($validated);
-            $property->user_id = $listingUserId;
+            $property->user_id = $request->user()->id;
             $property->slug = Str::slug($request->title).'-'.uniqid();
             $property->featured = $request->has('featured');
 
@@ -169,19 +160,17 @@ class PropertyController extends Controller
 
     public function show(Property $property)
     {
-        //
+        $this->authorize('view', $property);
+
+        return redirect()->route('admin.properties.edit', $property);
     }
 
     public function edit(Property $property)
     {
         $this->authorize('update', $property);
 
-        $property->load('images');
+        $property->load(['images', 'realtor']);
         $estates = \App\Models\Estate::all();
-        $realtorAssignees = \App\Models\User::query()
-            ->where('role', \App\Enums\UserRole::Realtor)
-            ->orderBy('name')
-            ->get();
 
         $propertyApi = [
             'updateData' => route('admin.properties.update-data', $property),
@@ -191,19 +180,18 @@ class PropertyController extends Controller
             'formAction' => route('admin.properties.update', $property),
         ];
 
-        return view('admin.properties.edit', compact('property', 'estates', 'realtorAssignees', 'propertyApi'));
+        return view('admin.properties.edit', compact('property', 'estates', 'propertyApi'));
     }
 
     public function updateData(UpdatePropertyDataRequest $request, Property $property)
     {
         try {
             $validated = $request->validated();
-            if ($request->user()->isAdmin() && array_key_exists('listing_user_id', $validated)) {
-                $property->user_id = $validated['listing_user_id'];
-            }
-            unset($validated['listing_user_id']);
 
             $property->fill($validated);
+            if (! $property->user_id) {
+                $property->user_id = $request->user()->id;
+            }
             $property->featured = $request->has('featured');
 
             if ($request->hasFile('brochure')) {
@@ -238,12 +226,11 @@ class PropertyController extends Controller
     public function update(UpdatePropertyDataRequest $request, Property $property)
     {
         $validated = $request->validated();
-        if ($request->user()->isAdmin() && array_key_exists('listing_user_id', $validated)) {
-            $property->user_id = $validated['listing_user_id'];
-        }
-        unset($validated['listing_user_id']);
 
         $property->fill($validated);
+        if (! $property->user_id) {
+            $property->user_id = $request->user()->id;
+        }
         $property->featured = $request->has('featured');
 
         if ($request->hasFile('brochure')) {
@@ -307,21 +294,5 @@ class PropertyController extends Controller
         $image->delete();
 
         return redirect()->route('admin.properties.edit', $property)->with('success', 'Image deleted successfully!');
-    }
-
-    /**
-     * @param  array<string, mixed>  $validated
-     */
-    protected function resolveListingUserId(Request $request, array $validated): ?int
-    {
-        if ($request->user()->isAdmin()) {
-            if (! empty($validated['listing_user_id'])) {
-                return (int) $validated['listing_user_id'];
-            }
-
-            return $request->user()->isRealtor() ? $request->user()->id : null;
-        }
-
-        return $request->user()->id;
     }
 }

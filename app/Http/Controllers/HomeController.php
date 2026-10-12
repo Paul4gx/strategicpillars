@@ -19,8 +19,13 @@ class HomeController extends Controller
         $featuredEstates = Estate::latest()->take(3)->get();
         $featuredShortlets = []; // Shortlet::where('featured', true)->latest()->take(3)->get();
         $interiorShowcase = []; // Interior::latest()->take(4)->get();
-        $agents = TeamMember::latest()->get();
+        $agents = TeamMember::visible()->latest()->get();
 
         return view('home', compact('featuredProperties', 'featuredEstates', 'featuredShortlets', 'interiorShowcase', 'agents'));
+    }
+
+    public function homes()
+    {
+        return redirect()->route('properties.home');
     }
 } 

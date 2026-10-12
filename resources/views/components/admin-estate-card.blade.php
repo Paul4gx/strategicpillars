@@ -1,4 +1,11 @@
-@props(['estate'])
+@props([
+    'estate',
+    'editRoute' => null,
+    'allowDelete' => true,
+])
+@php
+    $editRoute = $editRoute ?? route('admin.estates.edit', $estate);
+@endphp
 
 <div class="admin-estate-card">
     <div class="estate-image">
@@ -75,23 +82,25 @@
                title="View Estate">
                 <i class="flaticon-magnifiying-glass"></i>
             </a>
-            <a href="{{ route('admin.estates.edit', $estate) }}" 
+            <a href="{{ $editRoute }}" 
                class="btn-action btn-edit" 
                title="Edit Estate">
                 <i class="flaticon-edit"></i>
             </a>
-            <form action="{{ route('admin.estates.destroy', $estate) }}" 
-                  method="POST" 
-                  class="delete-form"
-                  onsubmit="return confirm('Are you sure you want to delete this estate?')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" 
-                        class="btn-action btn-delete" 
-                        title="Delete Estate">
-                    <i class="flaticon-delete"></i>
-                </button>
-            </form>
+            @if($allowDelete)
+                <form action="{{ route('admin.estates.destroy', $estate) }}" 
+                      method="POST" 
+                      class="delete-form"
+                      onsubmit="return confirm('Are you sure you want to delete this estate?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" 
+                            class="btn-action btn-delete" 
+                            title="Delete Estate">
+                        <i class="flaticon-delete"></i>
+                    </button>
+                </form>
+            @endif
         </div>
     </div>
 </div>

@@ -24,6 +24,7 @@ class User extends Authenticatable
         'bio',
         'avatar_path',
         'onboarding_completed_at',
+        'deactivated_at',
     ];
 
     protected $hidden = [
@@ -38,19 +39,35 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => UserRole::class,
             'onboarding_completed_at' => 'datetime',
+            'deactivated_at' => 'datetime',
         ];
     }
 
     protected static function booted(): void
     {
         static::saving(function (User $user) {
-            $user->is_admin = $user->role === UserRole::Admin;
+            $user->is_admin = in_array($user->role, [UserRole::MainAdmin, UserRole::Admin], true);
         });
+    }
+
+    public function isMainAdmin(): bool
+    {
+        return $this->role === UserRole::MainAdmin;
     }
 
     public function isAdmin(): bool
     {
-        return $this->role === UserRole::Admin;
+        return in_array($this->role, [UserRole::MainAdmin, UserRole::Admin], true);
+    }
+
+    public function canManageTeam(): bool
+    {
+        return $this->isMainAdmin();
+    }
+
+    public function isActive(): bool
+    {
+        return $this->deactivated_at === null;
     }
 
     public function isRealtor(): bool

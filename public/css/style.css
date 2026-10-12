@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 :root {
   --White: #fff;
   --Text: #3D3E3F;
@@ -8,7 +7,7 @@
   --Third: #EB664E;
   --Fourth: #1F4B43;
   --Border: #EBEBEB;
-  --FontFamily: "Raleway";
+  --FontFamily: "Montserrat";
 }
 /**
   * Name: JustHome - Real Estate HTML Template
@@ -137,7 +136,7 @@ section {
 }
 
 html {
-  font-size: 62.5%;
+  /* font-size: 62.5%; */
   overflow-y: scroll;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
@@ -153,7 +152,8 @@ html {
 
 body {
   background: var(--White);
-  line-height: 1;
+  font-size: 16px;
+  line-height: 22px;
   padding: 0 !important;
 }
 
@@ -477,17 +477,7 @@ input[type=submit] {
   border: 0;
 }
 
-input[type=checkbox],
-input[type=radio] {
-  padding: 0;
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
-  background: rgba(0, 0, 0, 0) !important;
-  cursor: pointer;
-  vertical-align: sub;
-  /* Addresses excess padding in IE8/9 */
-}
+
 
 input[type=search] {
   -webkit-appearance: textfield;
@@ -563,7 +553,6 @@ h2, .h2 {
 }
 
 h3, .h3 {
-  font-size: 26px;
   line-height: 36px;
 }
 
@@ -7874,7 +7863,7 @@ form input[type=color]::placeholder {
   font-size: 15px;
   font-weight: 400;
   line-height: 28px;
-  color: var(--Secondary);
+  color: rgb(202, 199, 199);
 }
 form textarea.style-1,
 form input[type=text].style-1,
@@ -11117,7 +11106,7 @@ body::-webkit-scrollbar {
 }
 
 .form-bacsic-infomation textarea {
-  height: 230px !important;
+  height: 100px !important;
 }
 
 .form-location .wrap-map-v1 {

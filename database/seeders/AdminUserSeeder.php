@@ -15,7 +15,7 @@ class AdminUserSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'password' => '12345678',
-                'role' => UserRole::Admin,
+                'role' => UserRole::MainAdmin,
                 'email_verified_at' => now(),
             ]
         );

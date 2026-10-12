@@ -158,6 +158,20 @@
 .property-form-optional-toggle[aria-expanded="true"] .toggle-chevron {
     transform: rotate(-180deg);
 }
+.property-form-optional-section {
+    border: 1px dashed #d4d6d9;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    background: #fff;
+}
+.property-form-optional-section > h6 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #555;
+}
 </style>
 @endpush
 @section('content')
@@ -173,6 +187,7 @@
     $expandExtrasCreate = (old('parking_spaces') !== null && old('parking_spaces') !== '')
         || (old('year_built') !== null && old('year_built') !== '')
         || (old('area') !== null && old('area') !== '');
+    $expandAdditionalCreate = $expandAmenitiesCreate || $expandMediaCreate || $expandExtrasCreate;
 @endphp
  <div class="wg-box pl-44 mb-20">
 <h3 style="margin-bottom:20px">Add New Property</h3>
@@ -183,21 +198,6 @@
       class="form-bacsic-infomation flex gap30 flex-column">
    @csrf
     <x-text-input2 title="Title" name="title" :value="old('title')" required />
-    @if(!empty($realtorAssignees) && auth()->user()->isAdmin())
-    <fieldset class="text has-top-title mb-15">
-        <label class="d-block mb-8 fw-semibold">Listing realtor (optional)</label>
-        <select name="listing_user_id" class="form-select">
-            <option value="">— Company / unassigned —</option>
-            @foreach($realtorAssignees as $realtorUser)
-                <option value="{{ $realtorUser->id }}" @selected(old('listing_user_id') == $realtorUser->id)>
-                    {{ $realtorUser->name }} @if($realtorUser->realty_display_name) ({{ $realtorUser->realty_display_name }}) @endif
-                </option>
-            @endforeach
-        </select>
-        <small class="text-muted d-block mt-6">Shown on the public listing when set. Leave empty for generic branding.</small>
-        @error('listing_user_id')<div class="text-danger">{{ $message }}</div>@enderror
-    </fieldset>
-    @endif
     <x-text-input2 title="Short Description" name="short_description" :value="old('short_description')" required />
     <fieldset class="text has-top-title">
         <span style="font-size: 1.5rem;"> Long Description</span>
@@ -233,10 +233,7 @@
     <fieldset class="mb-15 text has-top-title">
         <select name="property_type" class="" required>
             <option value="">Select Property Type</option>
-            @php
-                $groupedTypes = \App\Models\Property::getGroupedPropertyTypes();
-            @endphp
-            @foreach($groupedTypes as $categoryKey => $category)
+            @foreach(\App\Models\Property::getGroupedPropertyTypes() as $categoryKey => $category)
                 <optgroup label="{{ $category['label'] }}">
                     @foreach($category['options'] as $typeKey => $typeLabel)
                         <option value="{{ $typeKey }}" {{ old('property_type') == $typeKey ? 'selected' : '' }}>
@@ -292,155 +289,43 @@
     </fieldset>
 
     <div class="property-form-optional">
-        <button class="property-form-optional-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#optional-extras-create" aria-expanded="{{ $expandExtrasCreate ? 'true' : 'false' }}" aria-controls="optional-extras-create">
-            <span>Parking, year built &amp; floor area <span class="hint">optional — expand when you have these details</span></span>
+        <button class="property-form-optional-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#optional-additional-create" aria-expanded="{{ $expandAdditionalCreate ? 'true' : 'false' }}" aria-controls="optional-additional-create">
+            <span>Additional Features <span class="hint">optional — extra details, amenities, video and brochure</span></span>
             <span class="toggle-chevron" aria-hidden="true">▼</span>
         </button>
-        <div id="optional-extras-create" class="collapse property-form-optional-body {{ $expandExtrasCreate ? 'show' : '' }}">
-            <div class="row mb-3">
-                <fieldset class="col-md-4 mb-15">
-                    <x-text-input2 title="Parking Spaces" name="parking_spaces" type="number" :value="old('parking_spaces')" />
-                </fieldset>
-                <fieldset class="col-md-4 mb-15">
-                    <x-text-input2 title="Year Built" name="year_built" type="number" :value="old('year_built')" min="1900" max="2030" />
-                </fieldset>
-                <fieldset class="col-md-4 mb-15">
-                    <x-text-input2 title="Area (sq ft)" name="area" type="number" :value="old('area')" min="1" />
+        <div id="optional-additional-create" class="collapse property-form-optional-body {{ $expandAdditionalCreate ? 'show' : '' }}">
+            <p class="text-muted small mb-15">Skip these for minimal listings; you can always edit the property later.</p>
+
+            <div class="property-form-optional-section">
+                <h6>Parking, year built &amp; floor area</h6>
+                <div class="row mb-0">
+                    <fieldset class="col-md-4 mb-15">
+                        <x-text-input2 title="Parking Spaces" name="parking_spaces" type="number" :value="old('parking_spaces')" />
+                    </fieldset>
+                    <fieldset class="col-md-4 mb-15">
+                        <x-text-input2 title="Year Built" name="year_built" type="number" :value="old('year_built')" min="1900" max="2030" />
+                    </fieldset>
+                    <fieldset class="col-md-4 mb-15">
+                        <x-text-input2 title="Area (sq ft)" name="area" type="number" :value="old('area')" min="1" />
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="property-form-optional-section">
+                <h6>Video &amp; brochure</h6>
+                <x-text-input2 title="Video Link (YouTube/Vimeo)" name="video_link" :value="old('video_link')" />
+                <fieldset class="text has-top-title">
+                    <label>Brochure (PDF)</label>
+                    <input type="file" name="brochure" class="form-control" tabindex="2" accept="application/pdf">
                 </fieldset>
             </div>
-        </div>
-    </div>
 
-    <div class="property-form-optional">
-        <button class="property-form-optional-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#optional-amenities-create" aria-expanded="{{ $expandAmenitiesCreate ? 'true' : 'false' }}" aria-controls="optional-amenities-create">
-            <span>Property features &amp; amenities <span class="hint">optional — expand if this listing has amenity details</span></span>
-            <span class="toggle-chevron" aria-hidden="true">▼</span>
-        </button>
-        <div id="optional-amenities-create" class="collapse property-form-optional-body {{ $expandAmenitiesCreate ? 'show' : '' }}">
-            <p class="text-muted small mb-15">Skip this section for minimal listings; you can always edit the property later.</p>
+            <div class="property-form-optional-section">
+                <h6>Property features &amp; amenities</h6>
     <div class="form-group w-100">
-        <h5 class="mb-5">Property Features & Amenities</h5>
-            @php
-                $amenities = [
-                    "Climate & Comfort" => [
-                        "Air Conditioning",
-                        "Heating",
-                        "Ceiling Fans",
-                        "Ventilation System",
-                        "Humidifier / Dehumidifier",
-                        "Insulation / Energy-efficient Windows",
-                    ],
-                    "Interior Features" => [
-                        "Window Coverings",
-                        "Flooring",
-                        "Built-in Wardrobes",
-                        "Walk-in Closet",
-                        "Fireplace",
-                        "Skylights",
-                        "Smart Home Controls",
-                        "Soundproof Walls",
-                    ],
-                    "Kitchen & Dining" => [
-                        "Refrigerator / Freezer",
-                        "Microwave",
-                        "Oven",
-                        "Stove / Cooktop",
-                        "Dishwasher",
-                        "Wine Cooler",
-                        "Pantry",
-                        "Breakfast Bar / Island",
-                        "Garbage Disposal",
-                    ],
-                    "Bathrooms & Wellness" => [
-                        "Bathtub",
-                        "Sauna",
-                        "Steam Room",
-                        "Shower Cabin",
-                        "Double Sink Vanity",
-                        "Heated Towel Racks",
-                    ],
-                    "Laundry & Utilities" => [
-                        "Washer",
-                        "Dryer",
-                        "Laundry Room",
-                        "Ironing Facilities",
-                        "Clothesline / Drying Rack",
-                        "Water Heater",
-                        "Backup Generator",
-                        "Solar Panels",
-                    ],
-                    "Technology & Connectivity" => [
-                        "WiFi / Broadband Internet",
-                        "TV Cable / Satellite TV",
-                        "Home Theater",
-                        "Intercom System",
-                        "Smart Door Locks / Video Doorbell",
-                        "EV Charging Station",
-                    ],
-                    "Lifestyle & Recreation" => [
-                        "Swimming Pool",
-                        "Jacuzzi / Hot Tub",
-                        "Gym / Fitness Center",
-                        "Barbeque / Outdoor Grill",
-                        "Game Room",
-                        "Cinema Room",
-                        "Library / Study Room",
-                        "Wine Cellar",
-                        "Kids' Play Area",
-                    ],
-                    "Outdoor & Landscaping" => [
-                        "Lawn / Garden",
-                        "Patio / Deck",
-                        "Balcony / Terrace",
-                        "Rooftop Access",
-                        "Outdoor Kitchen",
-                        "Fire Pit",
-                        "Pergola / Gazebo",
-                        "Fencing / Privacy Screens",
-                        "Sprinkler / Irrigation System",
-                    ],
-                    "Parking & Access" => [
-                        "Garage",
-                        "Carport",
-                        "Driveway",
-                        "Visitor Parking",
-                        "Gated Entry",
-                        "Handicap Accessibility",
-                    ],
-                    "Office & Commercial Features" => [
-                        "Conference / Meeting Rooms",
-                        "Reception Area",
-                        "Break Room / Kitchenette",
-                        "Co-working Spaces",
-                        "Printing / Copy Room",
-                        "Security Desk / Concierge",
-                        "Elevator Access",
-                        "Commercial HVAC System",
-                    ],
-                    "Safety & Security" => [
-                        "Smoke Detectors",
-                        "Fire Sprinkler System",
-                        "Fire Extinguishers",
-                        "Security Cameras",
-                        "Burglar Alarm",
-                        "24hr Security / Gated Community",
-                        "Safe Room / Panic Room",
-                    ],
-                    "Building & Structural" => [
-                        "Basement",
-                        "Attic",
-                        "Storage Room",
-                        "Workshop / Tool Shed",
-                        "High Ceilings",
-                        "Open Floor Plan",
-                        "Soundproof Windows",
-                        "Energy-efficient Design",
-                    ],
-                ];
-                $oldFeatures = old('property_features', []);
-            @endphp
-            
-        @foreach($amenities as $category => $features)
+            @php($oldFeatures = old('property_features', []))
+        
+@foreach(config('property_amenities') as $category => $features)
             <div class="amenity-category-collapsible">
                 <h4 class="amenity-category-header" onclick="toggleAmenityCategory('{{ str_replace([' ', '/', '&'], ['_', '_', 'and'], $category) }}')">
                     {{ $category }}
@@ -467,6 +352,7 @@
         @endforeach
         </div>
         @error('property_features')<div class="text-danger">{{ $message }}</div>@enderror
+            </div>
         </div>
     </div>
 
@@ -476,19 +362,6 @@
         {{-- <span class="text-xl"></span> --}}
     </fieldset>
 
-    <div class="property-form-optional">
-        <button class="property-form-optional-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#optional-media-create" aria-expanded="{{ $expandMediaCreate ? 'true' : 'false' }}" aria-controls="optional-media-create">
-            <span>Video &amp; brochure <span class="hint">optional — add tour links or a PDF when you have them</span></span>
-            <span class="toggle-chevron" aria-hidden="true">▼</span>
-        </button>
-        <div id="optional-media-create" class="collapse property-form-optional-body {{ $expandMediaCreate ? 'show' : '' }}">
-            <x-text-input2 title="Video Link (YouTube/Vimeo)" name="video_link" :value="old('video_link')" />
-            <fieldset class="text has-top-title">
-                <label>Brochure (PDF)</label>
-                <input type="file" name="brochure" class="form-control" tabindex="2" accept="application/pdf">
-            </fieldset>
-        </div>
-    </div>
         {{-- Dropzone container (not a form itself) --}}
     <fieldset class="text has-top-title">
         <h5 class="mb-5">Add Property Images</h5>
@@ -1109,9 +982,9 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // Initialize Summernote
     $('#long_description').summernote({
-        height: 300,
+        height: 200,
         minHeight: 200,
-        maxHeight: 500,
+        maxHeight: 200,
         focus: false,
         toolbar: [
             ['style', ['style']],

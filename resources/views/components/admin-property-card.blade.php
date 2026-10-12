@@ -2,6 +2,7 @@
     'property',
     'editRoute' => null,
     'destroyRoute' => null,
+    'allowDelete' => true,
 ])
 @php
     $editRoute = $editRoute ?? route('admin.properties.edit', $property);
@@ -88,18 +89,20 @@
                title="Edit Property">
                 <i class="flaticon-edit"></i>
             </a>
-            <form action="{{ $destroyRoute }}" 
-                  method="POST" 
-                  class="delete-form"
-                  onsubmit="return confirmDelete('{{ $property->title }}')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" 
-                        class="btn-action btn-delete" 
-                        title="Delete Property">
-                    <i class="flaticon-delete"></i>
-                </button>
-            </form>
+            @if($allowDelete)
+                <form action="{{ $destroyRoute }}" 
+                      method="POST" 
+                      class="delete-form"
+                      onsubmit="return confirmDelete('{{ $property->title }}')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" 
+                            class="btn-action btn-delete" 
+                            title="Delete Property">
+                        <i class="flaticon-delete"></i>
+                    </button>
+                </form>
+            @endif
         </div>
     </div>
 </div>

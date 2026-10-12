@@ -3,6 +3,9 @@
 @section('title', 'Dashboard')
 
 @section('content')
+@if(session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+@endif
 <h3>Welcome, {{ auth()->user()->name ?? 'Admin' }}</h3>
 <div class="text-content">We are glad to see you again!</div>
 
@@ -10,7 +13,7 @@
     <div class="wg-box">
         <div class="box-icon style-1 type-row">
             <div class="content">
-                <a href="{{ route('admin.properties.index') }}" class="title">{{ $totalProperties }}</a>
+                <a href="{{ $propertiesIndexRoute }}" class="title">{{ $totalProperties }}</a>
                 <div class="text-content">Properties</div>
             </div>
             <div class="icon has-ellipse">
@@ -18,21 +21,23 @@
             </div>
         </div>
     </div>
-    <div class="wg-box">
-        <div class="box-icon style-1 type-row">
-            <div class="content">
-                <a href="{{ route('admin.bookings.index') }}" class="title">{{ $totalBookings }}</a>
-                <div class="text-content">Bookings</div>
-            </div>
-            <div class="icon has-ellipse">
-                <i class="flaticon-chat-bubble"></i>
+    @unless($isRealtorPortal)
+        <div class="wg-box">
+            <div class="box-icon style-1 type-row">
+                <div class="content">
+                    <a href="{{ route('admin.bookings.index') }}" class="title">{{ $totalBookings }}</a>
+                    <div class="text-content">Bookings</div>
+                </div>
+                <div class="icon has-ellipse">
+                    <i class="flaticon-chat-bubble"></i>
+                </div>
             </div>
         </div>
-    </div>
+    @endunless
     <div class="wg-box">
         <div class="box-icon style-1 type-row">
             <div class="content">
-                <a href="{{ route('admin.estates.index') }}" class="title">{{ $totalEstates }}</a>
+                <a href="{{ $estatesIndexRoute }}" class="title">{{ $totalEstates }}</a>
                 <div class="text-content">Estates</div>
             </div>
             <div class="icon has-ellipse">
@@ -40,17 +45,19 @@
             </div>
         </div>
     </div>
-    <div class="wg-box">
-        <div class="box-icon style-1 type-row">
-            <div class="content">
-                <a href="{{ route('admin.team.index') }}" class="title">{{ $totalTeamMembers }}</a>
-                <div class="text-content">Team Members</div>
-            </div>
-            <div class="icon has-ellipse">
-                <i class="flaticon-user"></i>
+    @unless($isRealtorPortal)
+        <div class="wg-box">
+            <div class="box-icon style-1 type-row">
+                <div class="content">
+                    <a href="{{ route('admin.team.index') }}" class="title">{{ $totalTeamMembers }}</a>
+                    <div class="text-content">Team Members</div>
+                </div>
+                <div class="icon has-ellipse">
+                    <i class="flaticon-user"></i>
+                </div>
             </div>
         </div>
-    </div>
+    @endunless
 </div>
 
 <div class="grid-section-1">

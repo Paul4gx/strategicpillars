@@ -158,6 +158,20 @@
 .property-form-optional-toggle[aria-expanded="true"] .toggle-chevron {
     transform: rotate(-180deg);
 }
+.property-form-optional-section {
+    border: 1px dashed #d4d6d9;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    background: #fff;
+}
+.property-form-optional-section > h6 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #555;
+}
 
 /* ========================================
    PROGRESS MODAL STYLES - ENHANCED & RESPONSIVE
@@ -666,6 +680,7 @@
         || (old('parking_spaces') !== null && old('parking_spaces') !== '')
         || (old('year_built') !== null && old('year_built') !== '')
         || (old('area') !== null && old('area') !== '');
+    $expandAdditionalEdit = $expandOptionalAmenitiesEdit || $expandOptionalMediaEdit || $expandOptionalExtrasEdit;
 @endphp
  <div class="wg-box pl-44 mb-20">
 <h3>Edit Property</h3>
@@ -677,21 +692,14 @@
    @csrf
    @method('PUT')
     <x-text-input2 title="Title" name="title" :value="old('title', $property->title)" required />
-    @if(!empty($realtorAssignees) && auth()->user()->isAdmin())
-    <fieldset class="text has-top-title mb-15">
-        <label class="d-block mb-8 fw-semibold">Listing realtor (optional)</label>
-        <select name="listing_user_id" class="form-select">
-            <option value="">— Company / unassigned —</option>
-            @foreach($realtorAssignees as $realtorUser)
-                <option value="{{ $realtorUser->id }}" @selected(old('listing_user_id', $property->user_id) == $realtorUser->id)>
-                    {{ $realtorUser->name }} @if($realtorUser->realty_display_name) ({{ $realtorUser->realty_display_name }}) @endif
-                </option>
-            @endforeach
-        </select>
-        <small class="text-muted d-block mt-6">Controls which realtor profile appears on the public listing.</small>
-        @error('listing_user_id')<div class="text-danger">{{ $message }}</div>@enderror
-    </fieldset>
-    @endif
+    @php($currentRealtor = $property->realtor)
+    <p class="text-muted small mt-0 mb-10">
+        Listing attributed to:
+        <strong>{{ $currentRealtor?->publicBrandName() ?? 'Unassigned' }}</strong>
+        @if($currentRealtor && $currentRealtor->id !== auth()->id())
+            <span class="text-warning"> · changes you save here remain attributed to this realtor.</span>
+        @endif
+    </p>
     <x-text-input2 title="Short Description" name="short_description" :value="old('short_description', $property->short_description)" />
     <p class="text-muted small mt-8 mb-0">Title and short description are used for search results and previews—no separate SEO fields.</p>
     <fieldset class="text has-top-title">
@@ -729,14 +737,10 @@
     <fieldset class="mb-15">
         <select name="property_type" class="form-select nice-select" required>
             <option value="">Select Property Type</option>
-            @php
-                $groupedTypes = \App\Models\Property::getGroupedPropertyTypes();
-                $currentType = old('property_type', $property->property_type);
-            @endphp
-            @foreach($groupedTypes as $categoryKey => $category)
+            @foreach(\App\Models\Property::getGroupedPropertyTypes() as $categoryKey => $category)
                 <optgroup label="{{ $category['label'] }}">
                     @foreach($category['options'] as $typeKey => $typeLabel)
-                        <option value="{{ $typeKey }}" {{ $currentType == $typeKey ? 'selected' : '' }}>
+                        <option value="{{ $typeKey }}" {{ old('property_type', $property->property_type) == $typeKey ? 'selected' : '' }}>
                             {{ $typeLabel }}
                         </option>
                     @endforeach
@@ -789,155 +793,51 @@
     </fieldset>
 
     <div class="property-form-optional">
-        <button class="property-form-optional-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#optional-extras-edit" aria-expanded="{{ $expandOptionalExtrasEdit ? 'true' : 'false' }}" aria-controls="optional-extras-edit">
-            <span>Parking, year built &amp; floor area <span class="hint">optional — expand when you have these details</span></span>
+        <button class="property-form-optional-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#optional-additional-edit" aria-expanded="{{ $expandAdditionalEdit ? 'true' : 'false' }}" aria-controls="optional-additional-edit">
+            <span>Additional Features <span class="hint">optional — extra details, amenities, video and brochure</span></span>
             <span class="toggle-chevron" aria-hidden="true">▼</span>
         </button>
-        <div id="optional-extras-edit" class="collapse property-form-optional-body {{ $expandOptionalExtrasEdit ? 'show' : '' }}">
-            <div class="row mb-3">
-                <fieldset class="col-md-4 mb-15">
-                    <x-text-input2 title="Parking Spaces" name="parking_spaces" type="number" :value="old('parking_spaces', $property->parking_spaces)" />
-                </fieldset>
-                <fieldset class="col-md-4 mb-15">
-                    <x-text-input2 title="Year Built" name="year_built" type="number" :value="old('year_built', $property->year_built)" min="1900" max="2030" />
-                </fieldset>
-                <fieldset class="col-md-4 mb-15">
-                    <x-text-input2 title="Area (sq ft)" name="area" type="number" :value="old('area', $property->area)" min="1" />
+        <div id="optional-additional-edit" class="collapse property-form-optional-body {{ $expandAdditionalEdit ? 'show' : '' }}">
+            <p class="text-muted small mb-15">Auto-opens if any of these already have values on the listing.</p>
+
+            <div class="property-form-optional-section">
+                <h6>Parking, year built &amp; floor area</h6>
+                <div class="row mb-0">
+                    <fieldset class="col-md-4 mb-15">
+                        <x-text-input2 title="Parking Spaces" name="parking_spaces" type="number" :value="old('parking_spaces', $property->parking_spaces)" />
+                    </fieldset>
+                    <fieldset class="col-md-4 mb-15">
+                        <x-text-input2 title="Year Built" name="year_built" type="number" :value="old('year_built', $property->year_built)" min="1900" max="2030" />
+                    </fieldset>
+                    <fieldset class="col-md-4 mb-15">
+                        <x-text-input2 title="Area (sq ft)" name="area" type="number" :value="old('area', $property->area)" min="1" />
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="property-form-optional-section">
+                <h6>Video &amp; brochure</h6>
+                <x-text-input2 title="Video Link (YouTube/Vimeo)" name="video_link" :value="old('video_link', $property->video_link)" />
+                <div class="form-group mb-3">
+                    <label>Current Brochure</label>
+                    @if($property->brochure)
+                        <a href="{{ asset('storage/uploads/brochures/' . $property->brochure) }}" target="_blank" rel="noopener">Download brochure</a>
+                    @else
+                        <span>No brochure uploaded.</span>
+                    @endif
+                </div>
+                <fieldset class="text has-top-title">
+                    <label>Replace Brochure (PDF)</label>
+                    <input type="file" name="brochure" class="form-control" tabindex="2" accept="application/pdf">
                 </fieldset>
             </div>
-        </div>
-    </div>
 
-    <div class="property-form-optional">
-        <button class="property-form-optional-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#optional-amenities-edit" aria-expanded="{{ $expandOptionalAmenitiesEdit ? 'true' : 'false' }}" aria-controls="optional-amenities-edit">
-            <span>Property features &amp; amenities <span class="hint">optional — expand to add or change amenities</span></span>
-            <span class="toggle-chevron" aria-hidden="true">▼</span>
-        </button>
-        <div id="optional-amenities-edit" class="collapse property-form-optional-body {{ $expandOptionalAmenitiesEdit ? 'show' : '' }}">
-            <p class="text-muted small mb-15">Leave collapsed for minimal listings. This panel opens automatically if amenities are already saved.</p>
+            <div class="property-form-optional-section">
+                <h6>Property features &amp; amenities</h6>
     <div class="form-group w-100">
-        <h5 class="mb-5">Property Features & Amenities</h5>
-        @php
-            $amenities = [
-                "Climate & Comfort" => [
-                    "Air Conditioning",
-                    "Heating",
-                    "Ceiling Fans",
-                    "Ventilation System",
-                    "Humidifier / Dehumidifier",
-                    "Insulation / Energy-efficient Windows",
-                ],
-                "Interior Features" => [
-                    "Window Coverings",
-                    "Flooring",
-                    "Built-in Wardrobes",
-                    "Walk-in Closet",
-                    "Fireplace",
-                    "Skylights",
-                    "Smart Home Controls",
-                    "Soundproof Walls",
-                ],
-                "Kitchen & Dining" => [
-                    "Refrigerator / Freezer",
-                    "Microwave",
-                    "Oven",
-                    "Stove / Cooktop",
-                    "Dishwasher",
-                    "Wine Cooler",
-                    "Pantry",
-                    "Breakfast Bar / Island",
-                    "Garbage Disposal",
-                ],
-                "Bathrooms & Wellness" => [
-                    "Bathtub",
-                    "Sauna",
-                    "Steam Room",
-                    "Shower Cabin",
-                    "Double Sink Vanity",
-                    "Heated Towel Racks",
-                ],
-                "Laundry & Utilities" => [
-                    "Washer",
-                    "Dryer",
-                    "Laundry Room",
-                    "Ironing Facilities",
-                    "Clothesline / Drying Rack",
-                    "Water Heater",
-                    "Backup Generator",
-                    "Solar Panels",
-                ],
-                "Technology & Connectivity" => [
-                    "WiFi / Broadband Internet",
-                    "TV Cable / Satellite TV",
-                    "Home Theater",
-                    "Intercom System",
-                    "Smart Door Locks / Video Doorbell",
-                    "EV Charging Station",
-                ],
-                "Lifestyle & Recreation" => [
-                    "Swimming Pool",
-                    "Jacuzzi / Hot Tub",
-                    "Gym / Fitness Center",
-                    "Barbeque / Outdoor Grill",
-                    "Game Room",
-                    "Cinema Room",
-                    "Library / Study Room",
-                    "Wine Cellar",
-                    "Kids' Play Area",
-                ],
-                "Outdoor & Landscaping" => [
-                    "Lawn / Garden",
-                    "Patio / Deck",
-                    "Balcony / Terrace",
-                    "Rooftop Access",
-                    "Outdoor Kitchen",
-                    "Fire Pit",
-                    "Pergola / Gazebo",
-                    "Fencing / Privacy Screens",
-                    "Sprinkler / Irrigation System",
-                ],
-                "Parking & Access" => [
-                    "Garage",
-                    "Carport",
-                    "Driveway",
-                    "Visitor Parking",
-                    "Gated Entry",
-                    "Handicap Accessibility",
-                ],
-                "Office & Commercial Features" => [
-                    "Conference / Meeting Rooms",
-                    "Reception Area",
-                    "Break Room / Kitchenette",
-                    "Co-working Spaces",
-                    "Printing / Copy Room",
-                    "Security Desk / Concierge",
-                    "Elevator Access",
-                    "Commercial HVAC System",
-                ],
-                "Safety & Security" => [
-                    "Smoke Detectors",
-                    "Fire Sprinkler System",
-                    "Fire Extinguishers",
-                    "Security Cameras",
-                    "Burglar Alarm",
-                    "24hr Security / Gated Community",
-                    "Safe Room / Panic Room",
-                ],
-                "Building & Structural" => [
-                    "Basement",
-                    "Attic",
-                    "Storage Room",
-                    "Workshop / Tool Shed",
-                    "High Ceilings",
-                    "Open Floor Plan",
-                    "Soundproof Windows",
-                    "Energy-efficient Design",
-                ],
-            ];
-            $oldFeatures = old('property_features', $property->property_features ?? []);
-        @endphp
+        @php($oldFeatures = old('property_features', $property->property_features ?? []))
         
-        @foreach($amenities as $category => $features)
+@foreach(config('property_amenities') as $category => $features)
             <div class="amenity-category-collapsible">
                 <h4 class="amenity-category-header" onclick="toggleAmenityCategory('{{ str_replace([' ', '/', '&'], ['_', '_', 'and'], $category) }}')">
                     {{ $category }}
@@ -966,6 +866,7 @@
         @endforeach
     </div>
     @error('property_features')<div class="text-danger">{{ $message }}</div>@enderror
+            </div>
         </div>
     </div>
 
@@ -974,27 +875,6 @@
         <input type="checkbox" name="featured" id="featuredbox" value="1" @if(old('featured', $property->featured)) checked @endif> 
     </fieldset>
 
-    <div class="property-form-optional">
-        <button class="property-form-optional-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#optional-media-edit" aria-expanded="{{ $expandOptionalMediaEdit ? 'true' : 'false' }}" aria-controls="optional-media-edit">
-            <span>Video &amp; brochure <span class="hint">optional — tour links and PDF handouts</span></span>
-            <span class="toggle-chevron" aria-hidden="true">▼</span>
-        </button>
-        <div id="optional-media-edit" class="collapse property-form-optional-body {{ $expandOptionalMediaEdit ? 'show' : '' }}">
-            <x-text-input2 title="Video Link (YouTube/Vimeo)" name="video_link" :value="old('video_link', $property->video_link)" />
-            <div class="form-group mb-3">
-                <label>Current Brochure</label>
-                @if($property->brochure)
-                    <a href="{{ asset('storage/uploads/brochures/' . $property->brochure) }}" target="_blank" rel="noopener">Download brochure</a>
-                @else
-                    <span>No brochure uploaded.</span>
-                @endif
-            </div>
-            <fieldset class="text has-top-title">
-                <label>Replace Brochure (PDF)</label>
-                <input type="file" name="brochure" class="form-control" tabindex="2" accept="application/pdf">
-            </fieldset>
-        </div>
-    </div>
         <div class="form-group mb-3">
          <div class="upload-image-wrap">
                 <div class="text">Current Image</div>
